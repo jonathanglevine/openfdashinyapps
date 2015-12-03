@@ -1,0 +1,13 @@
+SOURCEDIR <- '../sharedscripts/'
+if (!dir.exists(SOURCEDIR))
+{
+  SOURCEDIR <- 'sharedscripts/'
+}
+source( paste0( SOURCEDIR, 'prr_device.R') )
+source( paste0( SOURCEDIR, 'helpfunctions.r') )
+#source( paste0( SOURCEDIR, 'buildurlfun2.R') )
+source( paste0( SOURCEDIR, 'serverhelpers.R') )
+source( paste0( SOURCEDIR, 'uihelpers.R') )
+source( paste0( SOURCEDIR, 'getters.R') )
+source( paste0( SOURCEDIR, 'jstats.R') )
+source( paste0( SOURCEDIR, 'devicechoices.R') )

@@ -1,0 +1,52 @@
+<h4>LRT Report for `r input$t1`.</h4>
+
+LRT Results based on Total Events
+`r prrtitle()`
+`r helpText('Results sorted by LRR')`
+
+```{r prr, fig.width=5, echo=FALSE}
+kable(prr(), digits=2)
+```
+
+```{r cloudprr2, fig.height=8, fig.width=8, echo=FALSE, fig.keep='last', error=FALSE, warning=FALSE}
+ cloudprr()
+```
+
+```{r textplot, fig.height=8, fig.width=8, echo=FALSE}
+textplot()
+```
+
+<h5>Simulation Results for Event Based LRT</h5><br>
+```{r simplot, fig.height=6, fig.width=8, echo=FALSE}
+simplot()
+```
+
+
+<h5>Analyzed EventCounts for Drug</h5><br>
+`r alldrugtextAnalyzedEventCountsforDrug()`
+
+<br>
+
+
+`r alldrugqueryAnalyzedEventCountsforDrug()`
+`r titleAnalyzedEventCountsforDrug()`
+`r queryAnalyzedEventCountsforDrug()`
+```{r AnalyzedEventCountsforDrug, echo=FALSE}
+kable(AnalyzedEventCountsforDrug(), digits=2)
+```
+
+```{r cloudAnalyzedEventCountsforDrug, fig.height=8, fig.width=8, fig.keep='last', echo=FALSE}
+cloudAnalyzedEventCountsforDrug()
+```
+
+<h5>Analyzed Event Counts for All Drugs</h5><br>
+`r alltext()`
+`r queryalltext()`
+`r alltitle()`
+```{r All, echo=FALSE}
+kable(all(), digits=2)
+```
+
+```{r cloudall2, fig.height=8, fig.width=8, fig.keep='last', echo=FALSE}
+cloudall()
+```
