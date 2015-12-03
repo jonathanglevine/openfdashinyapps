@@ -162,8 +162,8 @@ User Specified"
 #5***********************************  
 l['about'] <- "<h3>About</h3>
 
-This software was developed by FDA's Office Of Informatics And Technology 
-Innovation (OITI) as part of the openFDA initiative. 
+This software was developed by FDA's Office Of Health Informatics
+(OHI) as part of the openFDA initiative. 
 <br>
 <h4>Development Team</h4>
 <b>Taha Kass-hout, MD, MS</b>, <i>FDA OC/OCS/Office of Health Informatics</i><br>

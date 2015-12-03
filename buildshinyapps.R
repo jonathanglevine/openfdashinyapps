@@ -1,5 +1,5 @@
 require(shinyapps)
-base <- 'C:/Users/levinej/Documents/R Script projects/openFDA/deployshiny/'
+base <- 'C:/Users/levinej/Documents/R Script projects/openfdadev2105/deployshiny/'
 dirlist <- list.dirs(full.names=FALSE, recursive=FALSE)
 exclude<- c(
   ".git",

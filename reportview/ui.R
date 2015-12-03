@@ -3,41 +3,27 @@ library(shiny)
 source('sourcedir.R')
 
 getchoices <- function(){
-  openfdavars <- c( 
-  'generic_name',
-  'unii',
-  'substance_name',
-  'product_type',
-  'pharm_class_cs',
-  'brand_name',
-  'pharm_class_pe',
-  'route',
-  'nui',
-  'pharm_class_moa',
-  'pharm_class_epc',
-  'application_number')
+  othervars <- c( 'Any Variable',  '_exists_')
+  
+  openfdavars <-  getallvars( allvars(), mytype = 'text', section= c('of', 'o2'))
   openfdavars <-  paste0( 'patient.drug.openfda.', openfdavars )
-  s <- c( 'patient.reaction.reactionmeddrapt', openfdavars)
-  s <- c(s, paste0(s, '.exact'))
-  s <- c( 'Any Variable', s,  '_exists_', 
-         'safetyreportid.exact',
-         'patient.patientonsetage',
-         'patient.patientonsetageunit',
-         'patient.patientsex',
-         'patient.drug.drugcharacterization',
-         'patient.drug.drugindication',
-         'patient.drug.drugindication.exact',
-         'patient.drug.medicinalproduct', 
-         'patient.drug.medicinalproduct.exact',
-         'patient.drug.activesubstance.activesubstancename', 
-         'patient.drug.activesubstance.activesubstancename.exact',
-         "serious",
-         "seriousnesscongenitalanomali",
-         "seriousnessdeath",
-         "seriousnessdisabling",
-         "seriousnesshospitalization",
-         "seriousnesslifethreatening",
-         "seriousnessother")
+  
+  headervars <- getallvars( allvars(), mytype = 'text', section= c('rh', 'se' ))
+  headervars <- c(headervars, paste0(headervars, '.exact'))
+  
+  patientvars <- getallvars( allvars(), mytype = 'text', section= c('pt', 'na'))
+  patientvars <-  paste0( 'patient.', patientvars )
+  patientvars <- c(patientvars, paste0(patientvars, '.exact'))
+  
+  drugvars <- getallvars( allvars(), mytype = 'text', section= c('dr', 'as'))
+  drugvars <-  paste0( 'patient.drug.', drugvars )
+  drugvars <- c(drugvars, paste0( drugvars, '.exact'))
+  
+  reactionvars <- getallvars( allvars(), mytype = 'text', section= c('re'))
+  reactionvars <-  paste0( 'patient.reaction.', reactionvars )
+  reactionvars <- c(reactionvars, paste0( reactionvars, '.exact'))
+
+  s <- c(othervars, openfdavars, headervars,  patientvars, drugvars, reactionvars)
   return(s)
 }
 
@@ -149,14 +135,14 @@ fluidRow(
            conditionalPanel(
              condition = "1 == 2",
              selectizeInput('v1', 'Variable 1', getchoices() , width='100%', 
-                            selected=getchoices()[2], options=list(create=TRUE, maxOptions=1000) ),
+                            selected=getchoices()[1], options=list(create=TRUE, maxOptions=1000) ),
              textInput("t1", "Terms", '')
            )
            ,
            bsModal( 'modalExample1', "Enter Variables", "tabBut", size = "small",
                     htmlOutput('mymodal'), 
                     selectizeInput('v1_2', 'Variable 1', getchoices() , width='100%', 
-                                   selected=getchoices()[2], options=list(create=TRUE, maxOptions=1000) ),
+                                   selected=getchoices()[1], options=list(create=TRUE, maxOptions=1000) ),
                     textInput("t1_2", "Terms", ''),
                     selectizeInput('v2_2', 'Variable 2', getchoices() , width='100%', 
                                    selected=getchoices()[1], options=list(create=TRUE, maxOptions=1000) ),

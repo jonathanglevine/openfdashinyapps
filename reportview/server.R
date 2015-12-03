@@ -123,9 +123,6 @@ getquery <- reactive({
   myurl <- buildURL(v1, t1,  limit=1, skip=getskip())
 
   mydf <- fda_fetch_p(session, myurl)
-#   print('url')
-#   print( (myurl) )
-#   print(mydf$meta)
   openfdalist <- (mydf$results$patient$drug[[1]])$openfda
   openfdadf <- listtodf(openfdalist, delim='; ', trunc=400)
   patientdf <- mydf$results$patient
@@ -134,7 +131,8 @@ getquery <- reactive({
   if (is.null(openfdalist)) {
     openfdalist <- data.frame(note='No OpenFDA variables for this report')
   }
-  out <- list(df=mydf, patientdf=patientdf, drugdf=drugdf, reactiondf=reactiondf, openfdadf=openfdadf, url=myurl )
+  out <- list(df=mydf, patientdf=patientdf, drugdf=drugdf, 
+              reactiondf=reactiondf, openfdadf=openfdadf, url=myurl )
 
   return(out)
 })    
@@ -462,19 +460,9 @@ output$patienttabletitle <- renderText({
 })
 
 output$patient <- renderTable({  
-#   mydf <- getquery()
-#   mydf <- (mydf$df$results$patient)    
-#   types <- (sapply(mydf, class))
-#   typesval <- types[types!='data.frame' & types!='list']
-#   #     typesdf <- types[types=='data.frame']
-# #      print(typesval)
-#   #     print('dfs')
-#   #print(typesdf)
-#   mydf <- mydf[ , names(typesval) ] 
    mynames <- getallvars( allvars(), mytype = 'text', section= c('pt'))
   mydf <- getquery()
   patientdf <- mydf$patientdf
-  print(patientdf[, names(patientdf) %in% mynames])
   if (length(patientdf)==0 ) {
     return( data.frame(note='No patient variables for this report'))
   }
@@ -494,22 +482,15 @@ output$patientdrugtabletitle <- renderText({
 
 output$drug <- renderTable({  
   mydf <- getquery()
-  mydf <- (mydf$df$results$patient$drug)
-  tmp <- mydf[[1]]
+  tmp <- mydf$drugdf
   types <- (sapply(tmp, class))
   typesval <- types[types!='data.frame' & types!='list']
-  #    typesdf <- types[types=='data.frame']
- #      print(types)
-  #     print('dfs')
-  #print( head(mydf) )
   mydf <- tmp[ , names(typesval) ]
   mydrugs2 <- ( tmp$activesubstance$activesubstancename )
-#  browser()
   if( length(mydrugs2) < nrow(mydf) )
   {
     mydrugs2 <- vector('character', length=nrow(mydf))
   }
-#  print(head(tmp$openfda))
   mydf <- data.frame(activesubstance=mydrugs2, mydf)
   return(mydf) 
 })
@@ -545,7 +526,6 @@ out <- paste(
       '<br> URL =', removekey( makelink(myurl) ), 
  '<BR><BR><b>JSON Output = </b><BR>'
   )
-#print( ('output$querytext') )
  return(out)
   })
 
@@ -555,18 +535,7 @@ output$json <- renderText({
   return( out )
 })
 
-output$json2 <- renderText({ 
-  myurl <- getquery()$url
-  jsonout <- getjson( myurl )
-  #  out <- paste0( '<pre>', getjson( myurl ), '</pre>' )
-  out <- paste ( '<BR><b>JSON Output = </b><BR>', jsonout )
-  s <- HTML(paste0('<iframe src="', (myurl), '"></iframe>' ) )
-  out <-  tags$iframe(HTML(s) ) 
-  out <- s
-  print(out)
- # browser()
-  return( (out) )
-})
+
 
 output$date1 <- renderText({ 
   l <- getdaterange()
@@ -649,19 +618,5 @@ if(!is.null(q$v3) )
 #   return(q)
 })
 
-output$help <- renderUI({
-  #  print('test')
-  s <- input$sidetabs
- # print(s)
-  out <- switch(s, 
-                'Graph Options'=loadhelp('graphoptions'),
-                'Data Options'=loadhelp('dataoptions'),
-                'Axis Options'=loadhelp('axisoptions'),
-                'Select Vars'= loadhelp('selectvars'),
-                'Load Data'= loadhelp('loaddata'),
-                'Overview'= loadhelp('overview'),
-                'Overviewside'= loadhelp('overviewside'),
-                'none')
-  return( HTML(out[[1]]) )
-})
+
 })
