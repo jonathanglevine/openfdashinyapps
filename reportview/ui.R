@@ -7,8 +7,10 @@ getchoices <- function(){
   
   openfdavars <-  getallvars( allvars(), mytype = 'text', section= c('of', 'o2'))
   openfdavars <-  paste0( 'patient.drug.openfda.', openfdavars )
+  openfdavars <- c(openfdavars, paste0(openfdavars, '.exact'))
   
   headervars <- getallvars( allvars(), mytype = 'text', section= c('rh', 'se' ))
+  headervars <- c(headervars, paste0(headervars, '.exact'))
   headervars <- c(headervars, paste0(headervars, '.exact'))
   
   patientvars <- getallvars( allvars(), mytype = 'text', section= c('pt', 'na'))
@@ -139,7 +141,7 @@ fluidRow(
              textInput("t1", "Terms", '')
            )
            ,
-           bsModal( 'modalExample1', "Enter Variables", "tabBut", size = "small",
+           bsModal( 'modalExample1', "Enter Variables", "tabBut", size = "large",
                     htmlOutput('mymodal'), 
                     selectizeInput('v1_2', 'Variable 1', getchoices() , width='100%', 
                                    selected=getchoices()[1], options=list(create=TRUE, maxOptions=1000) ),
