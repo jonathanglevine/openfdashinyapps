@@ -126,12 +126,13 @@ getquery <- reactive({
   openfdalist <- (mydf$results$patient$drug[[1]])$openfda
   openfdadf <- listtodf(openfdalist, delim='; ', trunc=400)
   patientdf <- mydf$results$patient
+  summarydf <- mydf$results$patient$summary
   drugdf <- mydf$results$patient$drug[[1]]
   reactiondf<- mydf$results$patient$reaction[[1]]
   if (is.null(openfdalist)) {
     openfdalist <- data.frame(note='No OpenFDA variables for this report')
   }
-  out <- list(df=mydf, patientdf=patientdf, drugdf=drugdf, 
+  out <- list(df=mydf, patientdf=patientdf, summarydf=summarydf, drugdf=drugdf, 
               reactiondf=reactiondf, openfdadf=openfdadf, url=myurl )
 
   return(out)
@@ -423,11 +424,12 @@ output$openfda <- renderTable({
   mynames <- getallvars( allvars(), mytype = 'text', section= c('of'))
    mydf <- getquery()
   openfdadf <- mydf$openfdadf
-  if (is.null(openfdadf)) {
+#  browser()
+  if (is.null( names(openfdadf ) ) ) {
     return( data.frame(note='No OpenFDA variables for this report'))
   }
   if( is.data.frame(openfdadf) ) {
-    return( ( openfdadf[, names(openfdadf) %in% mynames] )  )
+    return( ( openfdadf[names(openfdadf) %in% mynames] )  )
     } else {
       return( data.frame(note='No OpenFDA variables'))
     }
@@ -443,11 +445,11 @@ output$openfda2 <- renderTable({
   mynames <- getallvars( allvars(), mytype = 'text', section= c('o2'))
   mydf <- getquery()
   openfdadf <- mydf$openfdadf
-  if (is.null(openfdadf)) {
+  if (is.null( names(openfdadf ))) {
     return( data.frame(note='No OpenFDA variables for this report'))
   }
   if( is.data.frame(openfdadf) ) {
-    return( ( openfdadf[, names(openfdadf) %in% mynames] )  )
+    return( ( openfdadf[names(openfdadf) %in% mynames] )  )
   } else {
     return( data.frame(note='No OpenFDA variables'))
   }
@@ -460,9 +462,13 @@ output$patienttabletitle <- renderText({
 })
 
 output$patient <- renderTable({  
-   mynames <- getallvars( allvars(), mytype = 'text', section= c('pt'))
+   mynames <- getallvars( allvars(), mytype = 'text', section= c('pt', 'p2'))
   mydf <- getquery()
-  patientdf <- mydf$patientdf
+  patientdf <-  mydf$patientdf
+  if ( !is.null( mydf$summarydf) )
+    {
+    patientdf <- data.frame( mydf$patientdf,  mydf$summarydf )
+    }
   if (length(patientdf)==0 ) {
     return( data.frame(note='No patient variables for this report'))
   }

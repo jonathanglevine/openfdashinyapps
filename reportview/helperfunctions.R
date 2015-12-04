@@ -26,6 +26,7 @@ allvars <- function(){
     "pt_patientagegroup",
     "pt_patientweight",
     'pt_patientsex',
+    'p2_narrativeincludeclinical',
     
     'dr_drugstartdateformat',
     'dr_drugindication',

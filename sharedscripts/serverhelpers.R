@@ -843,7 +843,10 @@ listtocvect <- function(s, delim=', ', trunc=25){
 }
 
 listtodf <- function(lis, delim=', ', trunc=100){
-  
+  if ( is.null(lis) )
+  {
+    return(NULL)
+  }
   out <- data.frame(rownames=1:length(lis[[1]]), stringsAsFactors =FALSE )
   for (i in seq_along(lis) )
   {
