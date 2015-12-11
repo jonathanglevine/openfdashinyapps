@@ -82,7 +82,7 @@ getcounts999 <- function( session, v, t, count, limit=1000,
   if ( exactrad=='exact' )
   {
     exact <- TRUE
-    t <- paste0('%22', t, '%22')
+#    t <- paste0('%22', t, '%22')
     myurl <- buildURL(v = v, t= t, 
                       count = count, limit=limit, db= db, addplus = FALSE  )
     mylist <- fda_fetch_p( session, myurl,  message = counter, flag=paste( 'No Reports for', t, '<br>' ) )

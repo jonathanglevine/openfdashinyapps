@@ -221,78 +221,74 @@ return(l[tabname])
 }
 
 tt <- function(tabname){
-  mynames <- c('cocloud', 'eventtable', 'drugvar1', 'drugvar2',
-               'drugname1', 'drugname2', 'eventname1', 'eventname2', 
-               'overview', 'overviewside','none',
-               'dot1', 'dot2', 'pie1', 'pie2','drugprr', 'eventprr', 'ind?',
-               'event?', 'drug?', 'dash?', 'count', 'codrug1', 'codrug2', 'word1', 'word2',
-               'ts1', 'ts2', 'prr1', 'prr2', 'prr3', 'prr4', 'prr5', 'prr6')
-  l <- vector('list', length( mynames ) )
-  names(l) <- mynames
+  l <- vector('list' )
   #*1**********************************
-  l['cocloud'] <- "Word cloud for concomitant medications"
+  l <- append( l, c('cocloud' =  "Word cloud for concomitant medications") )
   
   #2*********************************** 
-  l['eventtable'] <- "Table of counts for selected drug
-  "
+  l <- append( l, c('eventtable' =  "Table of counts for selected drug") )
   #3*********************************** 
-  l['drugvar1'] <- "<b>Select Drug Variable</b>"
-  l['drugvar2'] <- "Select the openFDA drug variable to search"
-  l['drugname1'] <- '<b>Select Drug Name</b>'
-  l['drugname2'] <- 'Enter the name of a drug to analyze'
-  l['eventname1'] <- '<b>Select Event Name</b>'
-  l['eventname2'] <- 'Enter the name of an event to analyze'
-  l['gcount1'] <- '<b>Record Count</b>'
-  l['gcount2'] <- 'Number of records that match search criteria in openFDA'
-  l['gquery1'] <- '<b>openFDA Query</b>'
-  l['gquery2'] <- 'Click the query to see the results of the query in JSON format'
-  l['freqtab1'] <- 'Frequency Table'
-  l['freqtab2'] <- 'Counts'
-  l['word1'] <-  '<b>Word Cloud</b>' 
-  l['word2'] <- 'Size of words are proportional to the frequency of the word.  Words are truncated to 20 characters'
-  l['wordPRR'] <- 'Size of words are proportional to the PRR of the word.  Words are truncated to 20 characters'
-  l['wordLRT'] <- 'Size of words are proportional to the LLR of the word.  Words are truncated to 20 characters'
-  l['textplot1'] <-  '<b>Text Plot</b>' 
-  l['textplot2'] <- 'Plot of number of events and PRRs for terms.  Selecting a region of terms displays a table of the selected terms'
-  l['dot1'] <-  'Dot Chart' 
-  l['dot2'] <- 'Categories are on the y-axis, and frequency is on the x-axis'
-  l['pie1'] <-  'Pie Chart' 
-  l['pie2'] <- 'Counts represented as pieces of a pie.'
+  l <- append( l, c('drugvar1' =  "<b>Select Drug Variable</b>" ) )
+  l <- append( l, c('drugvar2' =  "Select the openFDA drug variable to search") )
+  l <- append( l, c('v1head' =  "<b>Select Drug Variable</b>" ) )
+  l <- append( l, c('v1text' =  "Select the openFDA drug variable to search") )
+  l <- append( l, c('drugname1' =  '<b>Select Drug Name</b>') )
+  l <- append( l, c('drugname2' =  'Enter the name of a drug to analyze' ) )
+  l <- append( l, c('eventname1' =  '<b>Select Event Name</b>' ) )
+  l <- append( l, c('eventname2' =  'Enter the name of an event to analyze' ) )
+  l <- append( l, c('gcount1' =  '<b>Record Count</b>' ) )
+  l <- append( l, c('gcount2' =  'Number of records that match search criteria in openFDA' ) )
+  l <- append( l, c('gquery1' =  '<b>openFDA Query</b>' ) )
+  l <- append( l, c('gquery2' =  'Click the query to see the results of the query in JSON format' ) )
+  l <- append( l, c('freqtab1' =  'Frequency Table' ) )
+  l <- append( l, c('freqtab2' =  'Counts' ) )
+  l <- append( l, c('word1' =   '<b>Word Cloud</b>'  ) )
+  l <- append( l, c('word2' =  'Size of words are proportional to the frequency of the word.  Words are truncated to 20 characters' ) )
+  l <- append( l, c('cloudprrhead' =   'a<b>Word Cloud</b>'  ) )
+  l <- append( l, c('cloudprrtext' =  'aSize of words are proportional to the PRR of the word.  Words are truncated to 20 characters' ) )
+  l <- append( l, c('wordPRR' =  'Size of words are proportional to the PRR of the word.  Words are truncated to 20 characters' ) )
+  l <- append( l, c('wordLRT' =  'Size of words are proportional to the LLR of the word.  Words are truncated to 20 characters' ) )
+  l <- append( l, c('textplot1' =   '<b>Text Plot</b>'  ) )
+  l <- append( l, c('textplot2' =  'Plot of number of events and PRRs for terms.  Selecting a region of terms displays a table of the selected terms' ) )
+  l <- append( l, c('dot1' =   'Dot Chart'  ) )
+  l <- append( l, c('dot2' =  'Categories are on the y-axis, and frequency is on the x-axis' ) )
+  l <- append( l, c('pie1' =   'Pie Chart'  ) )
+  l <- append( l, c('pie2' =  'Counts represented as pieces of a pie.' ) )
   
-  l['limit1'] <- 'Maximum Number of Terms'
-  l['limit2'] <- 'Maximum number of terms to evaluate.  Most frequent terms are returned first.'
-  l['cplimit1'] <- 'Maximum Number of Change Points'
-  l['cplimit2'] <- 'Maximum number of change points to calculate'
+  l <- append( l, c('limit1' =  'Maximum Number of Terms' ) )
+  l <- append( l, c('limit2' =  'Maximum number of terms to evaluate.  Most frequent terms are returned first.' ) )
+  l <- append( l, c('cplimit1' =  'Maximum Number of Change Points' ) )
+  l <- append( l, c('cplimit2' =  'Maximum number of change points to calculate' ) )
   
-  l['drugprr'] <- 'Drug name is linked to PRR results for drug-event combinations.'
-  l['eventprr'] <- 'Drug name is linked to PRR results for drug-event combinations.'
-  l['ind?'] <- 'Indication is linked to medline dictionary definition for indication term.'
-  l['event?'] <- '"M" is linked to medline dictionary definition for event term.'
-  l['drug?'] <- '"L" is linked to SPL labels for drug in openFDA.'
-  l['dash?'] <- '"D" is linked to a dashboard display for the drug.'
-  l['count'] <- 'Frequency is linked to report that meet the search criteria.'
+  l <- append( l, c('drugprr' =  'Drug name is linked to PRR results for drug-event combinations.' ) )
+  l <- append( l, c('eventprr' =  'Drug name is linked to PRR results for drug-event combinations.' ) )
+  l <- append( l, c('ind?' =  'Indication is linked to medline dictionary definition for indication term.' ) )
+  l <- append( l, c('event?' =  '"M" is linked to medline dictionary definition for event term.' ) )
+  l <- append( l, c('drug?' =  '"L" is linked to SPL labels for drug in openFDA.' ) )
+  l <- append( l, c('dash?' =  '"D" is linked to a dashboard display for the drug.' ) )
+  l <- append( l, c('count' =  'Frequency is linked to report that meet the search criteria.' ) )
   
-  l['codrug1'] <-  'Concomitant Medications'   
-  l['drug1'] <-  'Drug Name'
-  l['codrug1a'] <- paste('Frequency table for drugs found in selected reports.',
-                        l['drugprr'])
-  l['codrug2'] <- paste(l['codrug1a'],
-                        l['drug?'])
-  l['codrug3'] <- paste( l['codrug2'], l['dash?'] )
-  
-  l['event1'] <-  'Reported Events' 
-  l['event2'] <- 'Frequency table of events found in selected reports.  Event term is linked to PRR results for the event. "M" is linked to medline dictionary definition for event term'
-  
-  l['indication1'] <-  'Reported Indication for Drug' 
-  l['indication2'] <- 'Frequency table of reported indication for which the drug was administered.  Indication is linked to medline dictionary definition for event term'
-  
-  l['ts1'] <-  'Time Series' 
-  l['ts2'] <- 'Monthly and cumulative counts for drug-event combination.'
-  l['prr1'] <- "Proportional Reporting Ratio"  
-  l['prr2'] <- "The proportional reporting ratio (PRR) is a simple way to get a measure of how common an adverse event for a particular drug is compared to how common the event is in the overall database.  <br>"
-  l['prr3'] <- "A PRR > 1 for a drug-event combination indicates that a greater proportion of the reports for the drug are for the event than the proportion of events in the rest of the database."
-  l['prr4'] <- "For example, a PRR of 2 for a drug event combination indicates that the proportion of reports for the drug-event combination is twice the proportion of the event in the overall database."
-  l['prr5'] <- paste( l['prr2'], l['prr3'], l['prr4'], l['event?'] )
-  l['prr_E'] <- paste( l['prr2'], l['prr3'], l['prr4'], l['drug?'], l['dash?'] )
-return(l[tabname])
+  l <- append( l, c('codrug1' =   'Concomitant Medications'   )  )
+  l <- append( l, c('drug1' =   'Drug Name' ) )
+  l <- append( l, c('codrug1a' =  paste('Frequency table for drugs found in selected reports.', l['drugprr'] ) ) )
+   l <- append( l, c('codrug2' =  paste(l['codrug1a'], l['drug?']) ) )
+   l <- append( l, c('codrug3' =  paste( l['codrug2'], l['dash?'] ) ) )
+   
+   l <- append( l, c('event1' =   'Reported Events'  ) )
+   l <- append( l, c('event2' =  'Frequency table of events found in selected reports.  Event term is linked to PRR results for the event. "M" is linked to medline dictionary definition for event term' ) )
+   
+   l <- append( l, c('indication1' =   'Reported Indication for Drug'  ) )
+   l <- append( l, c('indication2' =  'Frequency table of reported indication for which the drug was administered.  Indication is linked to medline dictionary definition for event term' ) )
+   
+   l <- append( l, c('ts1' =   'Time Series'  ) )
+   l <- append( l, c('ts2' =  'Monthly and cumulative counts for drug-event combination.' ) )
+   l <- append( l, c('prr1' =  "Proportional Reporting Ratio"   ) )
+   l <- append( l, c('prr2' =  "The proportional reporting ratio (PRR) is a simple way to get a measure of how common an adverse event for a particular drug is compared to how common the event is in the overall database.  <br>" ) )
+   l <- append( l, c('prr3' =  "A PRR > 1 for a drug-event combination indicates that a greater proportion of the reports for the drug are for the event than the proportion of events in the rest of the database." ) )
+   l <- append( l, c('prr4' =  "For example, a PRR of 2 for a drug event combination indicates that the proportion of reports for the drug-event combination is twice the proportion of the event in the overall database." ) )
+   l <- append( l, c('prr5' =  paste( l['prr2'], l['prr3'],l['prr4'], l['event?'] ) ) )
+   l <- append( l, c('prr_E' =  paste( l['prr2'], l['prr3'], l['prr4'], l['drug?'], l['dash?'] ) ) )
+   tabname <- tabname
+#   browser()
+                             return( l[tabname])
 }

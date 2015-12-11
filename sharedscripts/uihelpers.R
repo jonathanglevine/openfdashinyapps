@@ -51,9 +51,11 @@ wordcloudtabset <- function(cloud, table,
   )
 }
 maketabset <- function( outputs, types=c('html', 'plot'), 
-                        names=c( "Table2","Word Cloud2" ), 
-                        popheads = c('Frequency Table', tt('word1'), tt('wordcomp1') ), 
-                        poptext = c('Counts', tt('word2'), tt('wordcomp2') ) ) { 
+                        names=c( "Table2","Word Cloud2" )
+                        , 
+                        popheads = c(NULL, NULL, NULL) , 
+                        poptext = c(NULL, NULL, NULL ) 
+                        ) { 
   
   
   tabsetPanel(
@@ -102,8 +104,37 @@ maketabset <- function( outputs, types=c('html', 'plot'),
   )
 }
 
+
+getpopstrings <- function( myname, pophead, poptext )
+  {
+  helpfunname <- paste0('pop', myname )
+# if function called popmyname exists, call it to get pop heads
+# otherwise if pophead or poptext are null get tt(mynametext) or tt(mynamehead)
+  if ( exists( helpfunname ) )
+    {
+      helpfun <- get( helpfunname)
+      s <- helpfun()
+      pophead <- s['head']
+      poptext <- s['text']
+    } else {
+      if (is.null(pophead))
+      {
+        pophead <- tt( paste0(myname, 'head' ) )
+#        print(pophead)
+      }
+      if (is.null(poptext))
+      {
+        poptext <- tt( paste0(myname, 'text' ) )
+      }
+    }
+  return ( c( pophead=pophead[[1]], poptext=poptext[[1]] ) )
+}
+
 htmlOutput_p <- function(table, pophead=NULL, poptext=NULL, placement='top')
   {
+  s <- getpopstrings( table, pophead, poptext)
+  pophead <- s['pophead']
+  poptext <- s['poptext']
   if( !is.null(pophead) )
       {
       popify(
@@ -120,6 +151,9 @@ htmlOutput_p <- function(table, pophead=NULL, poptext=NULL, placement='top')
 
 plotOutput_p <- function(plot, pophead=NULL, poptext=NULL, placement='top', ...)
 {
+  s <- getpopstrings( plot, pophead, poptext)
+  pophead <- s['pophead']
+  poptext <- s['poptext']
   if( !is.null(pophead) )
   {
     popify(
@@ -136,7 +170,10 @@ plotOutput_p <- function(plot, pophead=NULL, poptext=NULL, placement='top', ...)
 selectInput_p <- function( name, label, values, pophead=NULL, poptext=NULL, 
                            placement='bottom', usepop=TRUE, ...)
 {
-  if( !is.null(pophead) & usepop )
+  s <- getpopstrings( name, pophead, poptext)
+  pophead <- s['pophead']
+  poptext <- s['poptext']
+  if( !is.null( pophead ) & usepop )
   {
     popify( 
       selectInput(name, label , values), 
@@ -152,6 +189,9 @@ selectInput_p <- function( name, label, values, pophead=NULL, poptext=NULL,
 textInput_p <- function( name, label, value, pophead=NULL, poptext=NULL, 
                            placement='bottom', ...)
 {
+  s <- getpopstrings( name, pophead, poptext)
+  pophead <- s['pophead']
+  poptext <- s['poptext']
   if( !is.null(pophead) )
   {
     popify( 
@@ -168,6 +208,9 @@ textInput_p <- function( name, label, value, pophead=NULL, poptext=NULL,
 numericInput_p <- function( name, label, value, min=NA, max=NA, step=NA, pophead=NULL, poptext=NULL, 
                          placement='bottom', ...)
 {
+  s <- getpopstrings( name, pophead, poptext)
+  pophead <- s['pophead']
+  poptext <- s['poptext']
   if( !is.null(pophead) )
   {
     popify( 
@@ -186,7 +229,7 @@ numericInput_p <- function( name, label, value, min=NA, max=NA, step=NA, pophead
 usepopup <- function()
 {
    usepop <- uiOutput('usepop') 
-   print(usepop)
+#   print(usepop)
   if (is.null(usepop))
     (
       usepop <- TRUE

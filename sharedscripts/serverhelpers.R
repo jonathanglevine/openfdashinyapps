@@ -8,7 +8,7 @@ require(stringi)
 #require(GOsummaries)
 
 SOURCEDIR <- '../sharedscripts/'
-if (!dir.exists(SOURCEDIR))
+if (!file.exists( paste0( SOURCEDIR, 'key.r') ))
 {
   SOURCEDIR <- 'sharedscripts/'
 }
@@ -129,7 +129,7 @@ fda_fetch_p <- function(session, myurl,
 #     flag <- paste( 'No Reports for selected term<br>' )
 #   }
   iter <- 1
-  for (i in 1:100)
+  for (i in 1:10)
    { 
     out <-  try( fda_fetch( myurl ) )
     if( class(out) == "try-error" )
@@ -479,6 +479,7 @@ buildURL <- function (v, t, count='' ,limit=NULL, skip=0,  usekey=TRUE,
   for (i in seq_along(v) )
     if ( v[i]!='')
     { 
+ #     print(t[i])
       if (t[i]!=''){ 
         if(addplus)
         {

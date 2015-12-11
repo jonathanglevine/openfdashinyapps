@@ -63,6 +63,7 @@ shinyUI(fluidPage(
                    renderLimit(),
                    renderStart()
                  ), 
+                 dateRangeInput('daterange', 'Use Reports Between: ', start = '1989-6-30', end = Sys.Date()),
                  bsModal( 'modalExample', "Enter Variables", "tabBut", size = "small",
                           htmlOutput('mymodal'), 
                           textInput_p("drugname", "Name of Event", 'NEPHROGENIC SYSTEMIC FIBROSIS', 

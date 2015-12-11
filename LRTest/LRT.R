@@ -137,9 +137,32 @@ shinyServer(function(input, output, session) {
     }
   }
   
- 
+  gettimevar <- function(){
+    return ('receivedate')
+  }
   
+  gettimerange <- reactive({
+    geturlquery()
+    mydates <- getstartend()
+    start <- mydates[1]
+    end <-  mydates[2]
+    timerange <- paste0('[', start, '+TO+', end, ']')
+    return(timerange)
+  })
   
+  getstartend <- reactive({
+    geturlquery()
+    start <- input$daterange[1]
+    end <- input$daterange[2]
+    return( c(start, end))
+  })
+  
+  gettimeappend <- reactive({
+    geturlquery()
+    mytime <- getstartend()
+    s <- paste0('&start=', mytime[1] , '&end=', mytime[2] )
+    return( s )
+  }) 
   
 #   getlimit <- reactive({ 
 #     q <- geturlquery()
@@ -242,8 +265,8 @@ shinyServer(function(input, output, session) {
       return(data.frame( c( paste('Please enter a', getsearchtype(), 'name') , '') ) )
     }
     geturlquery()
-    v <- c( '_exists_', getexactterm1var() )
-    t <- c( input$v1, getterm1( session, quote = FALSE ) )
+    v <- c( '_exists_', getexactterm1var(), gettimevar() )
+    t <- c( input$v1, getterm1( session, quote = FALSE ), gettimerange() )
     mylist <-  getcounts999( session, v= v, t= t , 
                              count=getprrvarname(), exactrad = input$useexact )
     
@@ -276,8 +299,8 @@ shinyServer(function(input, output, session) {
     mydfR <- mylist$mydf[start:last,]
       s <- mydfR$term
       s<- paste0('%22', s, '%22', collapse='+')
-      v <- c( '_exists_', getbestterm1var() , getprrvarname() )
-      t <- c( input$v1, getbestterm1() ,s)
+      v <- c( '_exists_', getbestterm1var() , getprrvarname(), gettimevar() )
+      t <- c( input$v1, getbestterm1() , s,  gettimerange() )
       myurl2 <- buildURL(v= v, t=t, addplus=FALSE )
 #     myquery <- fda_fetch_p( session, myurl2)
 #      mydfR <- rbind( mydfR, c('Other', as.numeric( gettotals()$totaldrug  - myquery$meta$results$total ) ) )
@@ -296,24 +319,26 @@ shinyServer(function(input, output, session) {
     myurl <- mydf$myurl
     mydf <- mydf$mydfE
     mydfsource <- mydf
-    names <- c('v1','t1' ,'v2', 't2')
-    values <- c(getbestterm1var(), getbestterm1(), getprrvarname() )
+#     names <- c('v1','t1' ,'v2', 't2')
+#     values <- c(getbestterm1var(), getbestterm1(), getprrvarname() )
+    names <- c('v1','t1' ,'v3', 't3', 'v2', 't2' )
+    values <- c(getbestterm1var(), getbestterm1(), gettimevar(), gettimerange(),  getprrvarname() )
     mydf[,2] <- numcoltohyper(mydf[ , 2], mydf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
     if (getwhich()=='D')
       {
       mydf[,1] <- coltohyper(mydf[,1],  'LRE',
-                           mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact') )
+                           mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact',  gettimeappend()) )
       } else {
         mydf[,1] <- coltohyper(mydf[,1],  'LR',
-                               mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact' ) )
+                               mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend() ) )
       }
     return( list(mydfE=mydf, myurl=(myurl), mydfsource = mydfsource  ) )
   })  
   
   
   getcodruglist <- reactive({
-    v <- c('_exists_', getbestterm1var())
-    t <- c( input$v1, getbestterm1())
+    v <- c('_exists_', getbestterm1var(), gettimevar() )
+    t <- c( input$v1, getbestterm1(), gettimerange())
     myurl <- buildURL( v, t, 
                        count= getexactterm1var(), limit=1000 )
     mydf <- fda_fetch_p( session, myurl)
@@ -324,8 +349,8 @@ shinyServer(function(input, output, session) {
   })
   
   getcoeventlist <- reactive({
-    v <- c('_exists_', getbestterm1var())
-    t <- c( input$v1, getbestterm1())
+    v <- c('_exists_', getbestterm1var(), gettimevar() )
+    t <- c( input$v1, getbestterm1(), gettimerange())
     myurl <- buildURL( v, t, 
                        count= getprrvarname(), limit=1000 )
     mydf <- fda_fetch_p( session, myurl)
@@ -337,8 +362,8 @@ shinyServer(function(input, output, session) {
   
   
   getalleventlist <- reactive({
-    v <- c('_exists_', '_exists_', '_exists_')
-    t <- c( input$v1, getterm1var(),"patient.reaction.reactionmeddrapt")
+    v <- c('_exists_', '_exists_', '_exists_', gettimevar())
+    t <- c( input$v1, getterm1var(),"patient.reaction.reactionmeddrapt", gettimerange())
     myurl <- buildURL( v, t, 
                        count= "patient.reaction.reactionmeddrapt.exact", limit=1000 )
     mydf <- fda_fetch_p( session, myurl)
@@ -409,11 +434,13 @@ shinyServer(function(input, output, session) {
       medlinelinks <- makemedlinelink(sourcedf[,1], 'M')          
       mydf <- data.frame(M=medlinelinks, mydf) 
     }
-    names <- c('v1','t1')
-    values <- c(getbestterm1var() ) 
+#     names <- c('v1','t1')
+#     values <- c(getbestterm1var() ) 
+    names <- c('v1','v3', 't3','t1'  )
+    values <- c(getbestterm1var(), gettimevar(), gettimerange() )
     mydf[,'count'] <- numcoltohyper(mydf[ , 'count' ], mydf[ , 'term'], names, values, mybaseurl = getcururl(), addquotes=TRUE )
     mydf[,'term'] <- coltohyper(mydf[,'term'], linkapp , mybaseurl = getcururl(), 
-                                append= paste0( "&v1=", input$v1, "&useexact=", 'exact') )
+                                append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend()) )
     names(mydf) <- mynames
     return( list( mydf=mydf, myurl=(myurl), sourcedf=sourcedf ) )
   }   
@@ -423,8 +450,8 @@ getindcounts <- reactive({
       return(data.frame( c(paste('Please enter a', getsearchtype(), 'name'), '') ) )
     }
   
-  v <- c('_exists_', getbestterm1var())
-  t <- c( input$v1, getbestterm1() )
+  v <- c('_exists_', getbestterm1var(), gettimevar())
+  t <- c( input$v1, getbestterm1(), gettimerange() )
     myurl <- buildURL( v= v, t=t, 
                        count= paste0( 'patient.drug.drugindication', '.exact'), limit=1000)
     mydf <- fda_fetch_p( session, myurl)
@@ -433,8 +460,10 @@ getindcounts <- reactive({
     mydf <- data.frame(mydf, cumsum= cumsum(mydf[,2]))
     sourcedf <- mydf
 #    medlinelinks <- makemedlinelink(sourcedf[,1], '?')
-    names <- c('v1','t1', 'v2', 't2')
-    values <- c( getbestterm1var(), getbestterm1(), paste0( 'patient.drug.drugindication', '.exact') )
+#     names <- c('v1','t1', 'v2', 't2')
+#     values <- c( getbestterm1var(), getbestterm1(), paste0( 'patient.drug.drugindication', '.exact') )
+    names <- c('v1','t1' ,'v3', 't3', 'v2', 't2'  )
+    values <- c(getbestterm1var(), getbestterm1(), gettimevar(), gettimerange(), paste0( 'patient.drug.drugindication', '.exact') )
     mydf[,2] <- numcoltohyper(mydf[ , 2], mydf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
     mydf[,1] <- makemedlinelink(sourcedf[,1], mydf[,1])
     
@@ -447,14 +476,14 @@ getindcounts <- reactive({
     geturlquery()
     
     
-    v <- c('_exists_', '_exists_', '_exists_' )
-    t <- c( input$v1, getprrvarname(), getbestterm1var() )
+    v <- c('_exists_', '_exists_', '_exists_', gettimevar() )
+    t <- c( input$v1, getprrvarname(), getbestterm1var(), gettimerange() )
     totalurl <- buildURL(v, t,  count='', limit=1)
     totalreports <- fda_fetch_p( session, totalurl)    
     total <- totalreports$meta$results$total
     
-    v <- c( '_exists_', '_exists_', getbestterm1var() )
-    t <- c( input$v1, getprrvarname(), getbestterm1() )
+    v <- c( '_exists_', '_exists_', getbestterm1var(), gettimevar() )
+    t <- c( input$v1, getprrvarname(), getbestterm1(), gettimerange() )
     totaldrugurl <- buildURL( v, t, count='', limit=1)
     totaldrugreports <- fda_fetch_p( session, totaldrugurl)    
 #     if ( length( totaldrugreports )==0 )
@@ -568,14 +597,18 @@ getindcounts <- reactive({
     }
     comb[,'M'] <- medlinelinks
 #    comb2[,'M'] <- medlinelinks
-    names <- c('v1','t1' ,'v2', 't2')
-    values <- c(getbestterm1var(), getbestterm1(), getprrvarname() )
+#     names <- c('v1','t1' ,'v2', 't2')
+#     values <- c(getbestterm1var(), getbestterm1(), getprrvarname() )
+    names <- c('v1','t1' ,'v3', 't3', 'v2', 't2' )
+    values <- c(getbestterm1var(), getbestterm1(), gettimevar(), gettimerange(),  getprrvarname() )
 #    comb[,'count.x'] <- numcoltohyper(comb[ , 'count.x'], comb[ , 'term'], names, values, mybaseurl =getcururl(), addquotes=TRUE )
-    names <- c('v1','t1' ,'v2', 't2')
-    values <- c('_exists_', getterm1var()  , getprrvarname() )
+#     names <- c('v1','t1' ,'v2', 't2')
+#     values <- c('_exists_', getterm1var()  , getprrvarname() )
+    names <- c('v1','t1' ,'v3', 't3', 'v2', 't2' )
+    values <- c( '_exists_' , getterm1var(), gettimevar(), gettimerange(),  getprrvarname() )
 #    comb[, 'count.y' ] <- numcoltohyper(comb[ , 'count.y' ], comb[ , 'term'], names, values , mybaseurl = getcururl(), addquotes=TRUE)
     comb[,'term'] <- coltohyper( comb[,'term'], 'LRE', 
-                            mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact') )
+                            mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend()) )
     
     comb <- comb[order(comb$LLR, decreasing = TRUE),]
     sourcedf <- sourcedf[order(sourcedf$LLR, decreasing = TRUE),]
@@ -634,7 +667,7 @@ getindcounts <- reactive({
     values <- c('_exists_', getterm1var()  , getprrvarname() )
     mydf[,2] <- numcoltohyper(mydf[ , 2], mydf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
     mydf[,1] <- coltohyper(mydf[,1], ifelse( getwhich()=='D', 'LRE', 'LR'), 
-                           mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact') )
+                           mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend()) )
     return( list(mydf=mydf, mydf2= mydf2 , sourcedf=sourcedf) )
   })  
   
@@ -684,8 +717,8 @@ geteventtotals <- reactive(
     } else {
       eventvar <- gsub('.exact', '', getprrvarname(), fixed=TRUE)
 #      myv <- c('_exists_', eventvar)
-      myv <- c('_exists_', '_exists_', getprrvarname())
-      myt <- c( input$v1, getterm1var(),  foundtermslist[[i]]  )
+      myv <- c('_exists_', '_exists_', getprrvarname(), gettimevar() )
+      myt <- c( input$v1, getterm1var(),  foundtermslist[[i]], gettimerange()  )
 #      cururl <- buildURL(v= myv, t=myt, count= getprrvarname(), limit=1)
       cururl <- buildURL(v= myv, t=myt, limit=1)
 #Sys.sleep( .25 )
@@ -1084,6 +1117,7 @@ geturlquery <- reactive({
 }
   updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
   updateSelectizeInput(session, inputId = "v1", selected = q$v1)
+  updateDateRangeInput(session, 'daterange', start = q$start, end = q$end)
   return(q)
 })
 # Return the components of the URL in a string:

@@ -1,5 +1,5 @@
 SOURCEDIR <- '../sharedscripts/'
-if (!dir.exists(SOURCEDIR))
+if (!file.exists( paste0( SOURCEDIR, 'prr2.R') ) )
 {
   SOURCEDIR <- 'sharedscripts/'
 }

@@ -1,36 +1,8 @@
-# mytp <- function(x, y, w, refline=1, mytitle="Text Plot for Terms.  Draw a box around terms to see more details") { 
-#   # browser()
-#   mycex=1
-#   if (length(w) > 0)
-#   {
-#     #    w <- gsub(' ', '_', w, fixed = TRUE)
-#     #     xlim <-  c( min(x, na.rm = TRUE), max(x, na.rm = TRUE))
-#     #     ylim <-  c( min(y, na.rm = TRUE), max(y, na.rm = TRUE))
-#     #     lay <- wordlayout(x,y,w, xlim=xlim, ylim=ylim)
-#     xlim <-  c( min(x, na.rm = TRUE), max(x, na.rm = TRUE))
-#     xlim[2] <- xlim[2] + 0.3*(xlim[2]-xlim[1] ) 
-#     plot(x,y,type="p", 
-#          xlim = xlim,
-#          ylim = c( 1.0, max(y, na.rm = TRUE) ),
-#          log='y',
-#          xlab= 'Number of Events',
-#          ylab= 'PRR',
-#          col='red',
-#          main=mytitle,
-#          cex=mycex)
-#     text(x, y, w, pos=4, cex=mycex)
-#   } else {
-#     plot(1,1,type="n", 
-#          log='y',
-#          xlab= 'Number of Events',
-#          ylab= 'PRR',
-#          col='red',
-#          main='Please enter a term',
-#          cex=mycex)
-#   }
-#   #  text(x,y,w, pos=4, cex=.75)
-#   grid()
-#   abline(h=refline, col='red')
+# popprr <- function()
+# {
+#   text <- "Some prr stuff"
+#   head <- "prr head"
+#   return( c(head=head, text=text) )
 # }
 #*****************************************************
 shinyServer(function(input, output, session) {
@@ -43,10 +15,10 @@ shinyServer(function(input, output, session) {
      s[1] <- paste0( input$t1, '&v1=', input$v1 )
      
      #PRR for a Drug
-     s[2] <- paste0( input$t1, '&v1=', input$v1 )
+     s[2] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )
      
      #PRR for an Event
-     s[3] <- paste0( '', '&v1=', input$v1 )
+     s[3] <- paste0( '', '&v1=', input$v1, gettimeappend() )
      
      #Dynamic PRR
      s[4] <- paste0( input$t1 , '&v1=', input$v1 )
@@ -61,16 +33,20 @@ shinyServer(function(input, output, session) {
      s[7] <- paste0( input$t1, '&v1=', input$v1 )
      
      #LRTest
-     s[8] <- paste0( input$t1, '&v1=', input$v1 )
+     s[8] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )
+     
+     #LRTestE
+     s[9] <- paste0( '', '&v1=', input$v1 , gettimeappend())
+     
    } else {
      #Dashboard
      s[1] <- paste0( '', '&v1=', input$v1 )
      
      #PRR for a Drug
-     s[2] <- paste0( '', '&v1=', input$v1 )
+     s[2] <- paste0( '', '&v1=', input$v1 , gettimeappend())
      
      #PRR for an Event
-     s[3] <- paste0( input$t1, '&v1=', input$v1 )
+     s[3] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )
      
      #Dynamic PRR
      s[4] <- paste0( '' , '&v1=', input$v1, '&v2=', getbestvar1(), '&t2=', input$t1 )
@@ -85,7 +61,10 @@ shinyServer(function(input, output, session) {
      s[7] <- paste0( '', '&v1=', input$v1, '&v2=', getbestvar1() , '&t2=', input$t1)
      
      #LRTest
-     s[8] <- paste0( '', '&v1=', input$v1 )  
+     s[8] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )  
+     
+     #LRTestE
+     s[9] <- paste0( '', '&v1=', input$v1, gettimeappend() )
      }
    
    
@@ -155,6 +134,33 @@ shinyServer(function(input, output, session) {
       return( getterm1( session ) )
     }
   }
+  
+  gettimevar <- function(){
+    return ('receivedate')
+  }
+  
+  gettimerange <- reactive({
+    geturlquery()
+    mydates <- getstartend()
+    start <- mydates[1]
+    end <-  mydates[2]
+    timerange <- paste0('[', start, '+TO+', end, ']')
+    return(timerange)
+  })
+  
+  getstartend <- reactive({
+    geturlquery()
+    start <- input$daterange[1]
+    end <- input$daterange[2]
+    return( c(start, end))
+  })
+  
+  gettimeappend <- reactive({
+    geturlquery()
+    mytime <- getstartend()
+   s <- paste0('&start=', mytime[1] , '&end=', mytime[2] )
+    return( s )
+  })
 # Input SETTERS ====================================================================
   updatevars <- reactive({
     input$update
@@ -200,6 +206,7 @@ shinyServer(function(input, output, session) {
     updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
     updateSelectizeInput(session, inputId = "v1", selected = q$v1)
     updateRadioButtons( session, 'useexact', selected = q$useexact )
+    updateDateRangeInput(session, 'daterange', start = q$start, end = q$end)
     return(q)
   })
   
@@ -233,8 +240,8 @@ shinyServer(function(input, output, session) {
   # Only use the first value of limit rows
   getdrugcounts <- reactive({
     geturlquery()
-    v <- c('_exists_' , getexactvar1() )
-    t <- c(  getexactvar1() ,getterm1( session, quote = FALSE ) )
+    v <- c('_exists_' , getexactvar1(), gettimevar() )
+    t <- c(  getexactvar1() ,getterm1( session, quote = TRUE ), gettimerange() )
     mylist <-  getcounts999( session, v= v, t= t, 
                                  count=getprrvarname(), exactrad = input$useexact )
     mydfAll <- mylist$mydf
@@ -262,21 +269,21 @@ shinyServer(function(input, output, session) {
     mydfAll <- mylist$mydfAll
     mydfsource <- mydf
     mydfallsource <- mydfAll
-    names <- c('v1','t1' ,'v2', 't2')
-    values <- c(getbestvar1(), getbestterm1(), getprrvarname() )
+    names <- c('v1','t1' ,'v3', 't3', 'v2', 't2' )
+    values <- c(getbestvar1(), getbestterm1(), gettimevar(), gettimerange(),  getprrvarname() )
     mydf[,2] <- numcoltohyper(mydf[ , 2], mydf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
     mydfAll[,2] <- numcoltohyper(mydfAll[ , 2], mydfAll[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
     if (getwhich()=='D')
       {
       mydf[,1] <- coltohyper(mydf[,1],  'E',
-                           mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact') )
+                           mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend() )  )
       mydfAll[,1] <- coltohyper(mydfAll[,1],  'E',
-                             mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact') )
+                             mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend() ) )
       } else {
         mydf[,1] <- coltohyper(mydf[,1],  'D',
-                               mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact' ) )
+                               mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend() ) )
         mydfAll[,1] <- coltohyper(mydfAll[,1],  'D',
-                               mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact') )
+                               mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact'), gettimeappend() )
       }
     return( list(mydf=mydf, myurl=(myurl), mydfsource = mydfsource, mydfAll=mydfAll, mydfallsource = mydfallsource  ) )
   })  
@@ -289,8 +296,12 @@ shinyServer(function(input, output, session) {
 #     if ( is.null( getterm1( session ) ) ){
 #       return(data.frame( c(paste('Please enter a', getsearchtype(), 'name'), '') ) )
 #     }
-    mylist <- getcounts999( session, v= getexactvar1(), t= getterm1( session, quote = FALSE ), 
-                            count=getexactvar1(), exactrad = input$useexact )
+    
+    v <- c( getbestvar1(), gettimevar() )
+    t <- c(  getbestterm1(), gettimerange() )
+#     mylist <- getcounts999( session, v= getexactvar1(), t= getterm1( session, quote = FALSE ), 
+#                             count=getexactvar1(), exactrad = input$useexact )
+    mylist <- getcounts999( session, v= v, t= t, count=getexactvar1(), exactrad = input$useexact )
     if (length(mylist)==0)
       {
       return( list( mydf=mydf, myurl=(myurl), sourcedf=sourcedf ) )
@@ -333,11 +344,11 @@ shinyServer(function(input, output, session) {
       medlinelinks <- makemedlinelink(sourcedf[,1], 'M')          
       mydf <- data.frame(M=medlinelinks, mydf) 
     }
-    names <- c('v1','t1', 'v2', 't2')
-    values <- c(getbestvar1(), getbestterm1(), getexactvar1() ) 
+    names <- c('v1','t1','v3', 't3', 'v2', 't2')
+    values <- c(getbestvar1(), getbestterm1(), gettimevar(), gettimerange(), getexactvar1() ) 
     mydf[,'count'] <- numcoltohyper(mydf[ , 'count' ], mydf[ , 'term'], names, values, mybaseurl = getcururl(), addquotes=TRUE )
     mydf[,'term'] <- coltohyper(mydf[,'term'], getwhich() , mybaseurl = getcururl(), 
-                           append= paste0( "&v1=", input$v1, "&useexact=", 'exact') )
+                           append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend()) )
   names(mydf) <- mynames
    return( list( mydf=mydf, myurl=(myurl), sourcedf=sourcedf ) )
   })    
@@ -349,8 +360,11 @@ shinyServer(function(input, output, session) {
       
       return(data.frame( c(paste('Please enter a', getsearchtype(), 'name'), '') ) )
     }
-    mylist <- getcounts999( session, v= getbestvar1(), t=getbestterm1(), 
-                            count= paste0( 'patient.drug.drugindication', '.exact'), exactrad = input$useexact )
+    v <- c( getbestvar1(), gettimevar() )
+    t <- c( getbestterm1(), gettimerange() )
+#     mylist <- getcounts999( session, v= getbestvar1(), t=getbestterm1(), 
+#                             count= paste0( 'patient.drug.drugindication', '.exact'), exactrad = input$useexact )
+    mylist <- getcounts999( session, v= v, t=t, count= paste0( 'patient.drug.drugindication', '.exact'), exactrad = input$useexact )
     mydf <- mylist$mydf
     mydf <- mydf[!is.na(mydf[,2]), ]
     sourcedf <- mydf
@@ -359,8 +373,8 @@ shinyServer(function(input, output, session) {
     {
       return( list( mydf=mydf, myurl=(myurl), sourcedf=sourcedf ) )
     }
-    names <- c('v1','t1', 'v2', 't2')
-    values <- c( getbestvar1(), getbestterm1(), paste0( 'patient.drug.drugindication', '.exact') )
+    names <- c('v1','t1','v3', 't3', 'v2', 't2')
+    values <- c( getbestvar1(), getbestterm1(), gettimevar(), gettimerange(), paste0( 'patient.drug.drugindication', '.exact') )
     mydf[,2] <- numcoltohyper(mydf[ , 2], mydf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
     mydf[,1] <- makemedlinelink(sourcedf[,1], mydf[,1])
     return( list( mydf=mydf, myurl=(myurl), sourcedf=sourcedf ) )
@@ -370,13 +384,13 @@ shinyServer(function(input, output, session) {
 #Get total counts in database for each event and Total reports in database
   gettotals<- reactive({
     geturlquery()
-    v <- c( '_exists_', '_exists_' )
-    t <- c( getprrvarname(), getbestvar1() )
+    v <- c( '_exists_', '_exists_', gettimevar() )
+    t <- c( getprrvarname(), getbestvar1(), gettimerange() )
     totalurl <- buildURL(v, t,  count='', limit=1)
     totalreports <- fda_fetch_p( session, totalurl, flag=NULL) 
     total <- totalreports$meta$results$total
-    v <- c( '_exists_', '_exists_', getbestvar1() )
-    t <- c( getbestvar1(), getprrvarname(), getbestterm1() )
+    v <- c( '_exists_', '_exists_', getbestvar1(), gettimevar() )
+    t <- c( getbestvar1(), getprrvarname(), getbestterm1(), gettimerange() )
     totaldrugurl <- buildURL( v, t, count='', limit=1)
     totaldrugreports <- fda_fetch_p( session, totaldrugurl, flag=paste( 'No Reports for',
                                     ifelse(getwhich()=='D', 'drug', 'event' ), getterm1( session ), '<br>' ) ) 
@@ -449,14 +463,14 @@ shinyServer(function(input, output, session) {
       }
     }
     comb[,'M'] <- medlinelinks
-    names <- c('v1','t1' ,'v2', 't2')
-    values <- c(getbestvar1(), getbestterm1(), getprrvarname() )
+    names <- c('v1','t1','v3', 't3' ,'v2', 't2')
+    values <- c(getbestvar1(), getbestterm1(), gettimevar(), gettimerange(), getprrvarname() )
     comb[,'count.x'] <- numcoltohyper(comb[ , 'count.x'], comb[ , 'term'], names, values, mybaseurl =getcururl(), addquotes=TRUE )
-    names <- c('v1','t1' ,'v2', 't2')
-    values <- c( '_exists_', getvar1()  , getprrvarname() )
+    names <- c('v1','t1','v3', 't3' ,'v2', 't2')
+    values <- c( '_exists_', getvar1(), gettimevar(), gettimerange(), getprrvarname() )
     comb[, 'count.y' ] <- numcoltohyper(comb[ , 'count.y' ], comb[ , 'term'], names, values , mybaseurl = getcururl(), addquotes=TRUE)
     comb[,'term'] <- coltohyper( comb[,'term'], ifelse(getwhich()=='D', 'E', 'D' ), 
-                            mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact') )
+                            mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend()) )
 #     comb <- comb[order(comb$prr, decreasing = TRUE),]
 #     sourcedf <- sourcedf[order(sourcedf$prr, decreasing = TRUE),]
 #     row.names(comb)<- seq(1:nrow(comb))
@@ -475,11 +489,11 @@ shinyServer(function(input, output, session) {
     geturlquery()
     mydf <- geteventtotals()
     sourcedf <- mydf
-    names <- c('v1','t1' ,'v2', 't2')
-    values <- c('_exists_', getvar1( )  , getprrvarname() )
+    names <- c('v1','t1','v3', 't3' ,'v2', 't2')
+    values <- c('_exists_', getvar1( ), gettimevar(), gettimerange()  , getprrvarname() )
     mydf[,2] <- numcoltohyper(mydf[ , 2], mydf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
     mydf[,1] <- coltohyper(mydf[,1], ifelse( getwhich()=='D', 'E', 'D'), 
-                           mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact' ) )
+                           mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend() ) )
 #    print(head(mydf))
     return( list(mydf=mydf, sourcedf=sourcedf) )
   })  
@@ -502,8 +516,8 @@ geteventtotals <- reactive(
     {
     eventvar <- gsub('.exact', '', getprrvarname(), fixed=TRUE)
 #    myv <- c('_exists_', eventvar)
-    myv <- c('_exists_', getprrvarname(), '_exists_' )
-    myt <- c( getvar1(),  foundtermslist[[i]], getprrvarname()  )
+    myv <- c('_exists_', getprrvarname(), '_exists_', gettimevar() )
+    myt <- c( getbestvar1(),  foundtermslist[[i]], getprrvarname(), gettimerange()  )
 #    cururl <- buildURL(v= myv, t=myt, count= getprrvarname(), limit=1)
     cururl <- buildURL(v= myv, t=myt, limit=1, whichkey=i%%2)
  #   print(cururl)
@@ -597,7 +611,7 @@ output$info <- renderTable({
 
 
 ##
-# tabPanel("Event Counts for Specified Drug"  
+# tabPanel("Analyzed Drug/Event Counts for Specified Event/Drug"  
 output$alldrugtext <- renderText({ 
   l <- gettotals()
   return( 
@@ -630,10 +644,11 @@ output$specifieddrug <- renderTable({
            mynames = c('Term', paste( 'Counts for', getterm1( session ) ) ),
            error = paste( 'No results for', getterm1( session ) ) )
 },  sanitize.text.function = function(x) x)
+
+
+
 # tabPanel("Event Counts for All Drugs" 'alltext' 'queryalltext' 
 #'alltitle'  'allquerytext' ,'cloudall', 'all'
-
-
 output$alltext <- renderText({ 
   l <- gettotals()
   paste( '<b>Total reports with value for', getbestvar1() ,'in database:</b>', prettyNum(l['total'], big.mark=',' ), '(meta.results.total)<br>')
@@ -669,7 +684,7 @@ output$all <- renderTable({
 }, sanitize.text.function = function(x) x)
 
 
-# tabPanel("Event Counts for Drug" 'cotextE' 'querycotextE'  'cotitleE',
+# tabPanel("Ranked Drug/Event Counts for Event/Drug 'cotextE' 'querycotextE'  'cotitleE',
 # 'coquerytextE' ,'cloudcoqueryE', 'coqueryE'
 
 
@@ -718,6 +733,19 @@ output$coqueryE <- renderTable({
 #          wordcloudtabset('cloudcoquery', 'coquery'
 
 
+output$querycotext <- renderText({ 
+  l <- getcocounts()
+  paste( '<b>Query:</b>', removekey( makelink( l['myurl'] ) ), '<br>')
+})
+output$cotitle <- renderText({ 
+  return( ( paste0('<h4>Most Common ', getsearchtype() , 's In Selected Reports</h4><br>') ) )
+})
+
+output$coquery <- renderTable({  
+  tableout(mydf = getcocounts()$mydf,  mynames = NULL,
+           error = paste( 'No', getsearchtype(), 'for', getterm1( session ) ))
+}, sanitize.text.function = function(x) x)
+
 # tabPanel("Counts For Indications In Selected Reports"
 #            htmlOutput( 'indtext' ),
 #            htmlOutput_p( 'queryindtext' ,
@@ -737,10 +765,6 @@ output$indquery <- renderTable({
            error = paste( 'No results for', getterm1( session ) ) )
 }, sanitize.text.function = function(x) x)
 
-output$coquery <- renderTable({  
-  tableout(mydf = getcocounts()$mydf,  mynames = NULL,
-           error = paste( 'No', getsearchtype(), 'for', getterm1( session ) ))
-}, sanitize.text.function = function(x) x)
 
 
 
@@ -781,14 +805,7 @@ output$cloudindquery <- renderPlot({
 
 
 
-output$cotitle <- renderText({ 
-  return( ( paste0('<h4>Most Common ', getsearchtype() , 's In Selected Reports</h4><br>') ) )
-})
-# Query outputs =======================================================
-output$querycotext <- renderText({ 
-  l <- getcocounts()
-  paste( '<b>Query:</b>', removekey( makelink( l['myurl'] ) ), '<br>')
-})
+
 
 
 output$querytext <- renderText({ 
@@ -859,6 +876,8 @@ getcururl <- reactive({
   })
   
   output$applinks <- renderText({ 
+    s <- makeapplinks(  getcururl(), getqueryvars( 1 ) ) 
+    write(s, file='')
     return( makeapplinks(  getcururl(), getqueryvars( 1 ) )  )
   }) 
 })

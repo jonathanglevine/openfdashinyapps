@@ -1,9 +1,13 @@
 
 SOURCEDIR <- '../sharedscripts/'
-if (!dir.exists(SOURCEDIR))
-  {
-    SOURCEDIR <- 'sharedscripts/'
-  }
+# if (!dir.exists(SOURCEDIR))
+#   {
+#     SOURCEDIR <- 'sharedscripts/'
+# }
+if (!file.exists( paste0( SOURCEDIR, 'serverhelpers.R') ))
+{
+  SOURCEDIR <- 'sharedscripts/'
+}
 source( paste0( SOURCEDIR, 'prr2.R') )
 source( paste0( SOURCEDIR, 'helpfunctions.r') )
 #source( paste0( SOURCEDIR, 'buildurlfun2.R') )

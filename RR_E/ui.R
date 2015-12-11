@@ -44,7 +44,7 @@ shinyUI(fluidPage(
                       tabsetPanel(
                         tabPanel('Select Reaction',
                                  selectInput_p("v1", 'Drug Variable' ,getdrugvarchoices(), 
-                                               HTML( tt('drugvar1') ), tt('drugvar2'),
+#                                               HTML( tt('drugvar1') ), tt('drugvar2'),
                                                placement='top'),
                                  conditionalPanel(
                                    condition = "1 == 2", 
@@ -71,6 +71,7 @@ shinyUI(fluidPage(
                                    renderLimit(),
                                    renderStart()
                                  ), 
+                                 dateRangeInput('daterange', 'Use Reports Between: ', start = '1989-6-30', end = Sys.Date()),
                                  bsModal( 'modalExample', "Enter Variables", "tabBut", size = "small",
                                           htmlOutput('mymodal'), 
                                           textInput_p("drugname", "Adverse Reaction", '', 
@@ -115,9 +116,11 @@ shinyUI(fluidPage(
 #                               )
                                  maketabset( c('prr', 'cloudprr', 'textplot'), 
                                              types=c('html', "plot", 'plot'),
-                                             names=c("Table","Word Cloud", "Text Plot"), 
+                                             names=c("Table","Word Cloud", "Text Plot")
+                                             , 
                                              popheads = c(tt('prr1'), tt('word1'), tt('textplot1') ), 
-                                             poptext = c( tt('prr5'), tt('wordPRR'), tt('textplot2') ) )
+                                             poptext = c( tt('prr5'), tt('wordPRR'), tt('textplot2') ) 
+                                             )
                         ),
                         tabPanel("Analyzed Drug Counts for Specified Events"   ,
                                  wellPanel( 
