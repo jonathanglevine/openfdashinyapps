@@ -108,6 +108,7 @@ maketabset <- function( outputs, types=c('html', 'plot'),
 getpopstrings <- function( myname, pophead, poptext )
   {
   helpfunname <- paste0('pop', myname )
+#  browser()
 # if function called popmyname exists, call it to get pop heads
 # otherwise if pophead or poptext are null get tt(mynametext) or tt(mynamehead)
   if ( exists( helpfunname ) )

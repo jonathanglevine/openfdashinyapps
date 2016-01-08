@@ -229,6 +229,7 @@ getcpalinks <- function(column, names, values, mybaseurl, appendtext='')
 
 #buildurl =======================================================
 extractbaseurl <- function(myurl){
+  myurl <- gsub('//', '/', myurl, fixed=TRUE )
   tmp <- strsplit(myurl,'?', fixed=TRUE)
   tmp1 <- tmp[[1]][1]
   tmp2 <- strsplit(tmp1,'/', fixed=TRUE)
@@ -927,4 +928,81 @@ getvarprefixs <- function( cols=allvars() )
 {
   s <- substr( cols, 1, 2 )
   return( unique(s))
+}
+
+getsimplecols <- function(mydf)
+  {
+  types <- (sapply(mydf, class))
+  typesval <- types[types!='data.frame' & types!='list']
+  mynames <-  names(typesval)
+  mydf <- as.data.frame( mydf[ , mynames ] )
+  names(mydf) <- mynames
+  return (mydf)
+}
+
+buildtable <- function(flat, keyvals, keyname, myvars)
+  {
+  mynames <- c( keyname, getallvars( allvars(), mytype = 'text', section= myvars ) )
+  blank <- matrix(nrow=1, ncol=length(mynames))
+  blankdf <- as.data.frame( blank, stringsAsFactors=FALSE )
+  names(blankdf) <- mynames
+  tmp <- blankdf
+#   browser()
+  for (i in 1:nrow(flat) )
+  {
+    curid <- keyvals[i]
+    curdata <- flat[ i, ]
+    curdf <- data.frame( id=curid , curdata)
+    curnames <- names(curdf)
+ #   browser()
+    newdf <- matrix(nrow=nrow(curdf), ncol=length(mynames))
+    newdf <- as.data.frame( newdf, stringsAsFactors=FALSE )
+    names(newdf) <- mynames
+    newdf[ keyname ] <- curdf['id' ]
+    for (j in 2:length(mynames) )
+    {
+      if ( mynames[j] %in% curnames )
+      {
+        newdf[ mynames[j] ] <- curdf[ mynames[j] ]
+      } 
+    }
+    tmp <- rbind(tmp, newdf)
+  }
+#  browser()
+  tmp <- tmp[ which(!is.na( tmp[ keyname ] ) ), ]
+  return( tmp )
+}
+
+buildtablerow <- function(flat, keyval, keyname, myvars)
+{
+ # browser()
+  mynames <- c( keyname, getallvars( allvars(), mytype = 'text', section= myvars ) )
+  blank <- matrix(nrow=1, ncol=length(mynames))
+  blankdf <- as.data.frame( blank, stringsAsFactors=FALSE )
+  names(blankdf) <- mynames
+  tmp <- blankdf
+  #   browser()
+  for (i in 1:nrow(flat) )
+  {
+    curid <- keyval
+    curdata <- as.data.frame( flat[ i, ] )
+    curdf <- data.frame(curdata)
+    curnames <- names(curdf)
+    #   browser()
+    newdf <- matrix(nrow=nrow(curdf), ncol=length(mynames))
+    newdf <- as.data.frame( newdf, stringsAsFactors=FALSE )
+    names(newdf) <- mynames
+#    newdf[ keyname ] <- curdf[keyname ]
+    for (j in 1:length(mynames) )
+    {
+      if ( mynames[j] %in% curnames )
+      {
+        newdf[ mynames[j] ] <- curdf[ mynames[j] ]
+      } 
+    }
+    tmp <- rbind(tmp, newdf)
+  }
+  #  browser()
+  tmp <- tmp[ which(!is.na( tmp[ keyname ] ) ), ]
+  return( tmp )
 }

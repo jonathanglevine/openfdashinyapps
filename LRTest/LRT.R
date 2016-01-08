@@ -1,4 +1,10 @@
 
+popcoquery <- function()
+{
+  text <- 'Frequency table for drugs found in selected reports. Drug name is linked to LRT results for drug. \"L\" is linked to SPL labels for drug in openFDA. \"D\" is linked to a dashboard display for the drug.'
+  head <- 'Concomitant Medications' 
+  return( c(head=head, text=text) )
+}
 #*****************************************************
 shinyServer(function(input, output, session) {
   
@@ -32,6 +38,12 @@ shinyServer(function(input, output, session) {
      #labelview
      s[7] <- paste0( input$t1, '&v1=', input$v1 )
      
+     #LRTest
+     s[8] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )
+     
+     #LRTestE
+     s[9] <- paste0( '', '&v1=', input$v1 , gettimeappend())
+     
    } else {
      #Dashboard
      s[1] <- paste0( '', '&v1=', input$v1 )
@@ -53,7 +65,12 @@ shinyServer(function(input, output, session) {
      
      #labelview
      s[7] <- paste0( '', '&v1=', input$v1, '&v2=', getbestterm1var() , '&t2=', input$t1)
-       
+     
+     #LRTest
+     s[8] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )
+     
+     #LRTestE
+     s[9] <- paste0( '', '&v1=', input$v1 , gettimeappend())  
      }
    return(s)
  }
@@ -110,6 +127,13 @@ shinyServer(function(input, output, session) {
       #PRR table of drugs
       return( paste0(input$v1, '.exact') )
     }
+  })
+  
+  gettimeappend <- reactive({
+    geturlquery()
+    mytime <- getstartend()
+    s <- paste0('&start=', mytime[1] , '&end=', mytime[2] )
+    return( s )
   })
   
   getexactterm1var <- reactive({ 
@@ -663,8 +687,8 @@ getindcounts <- reactive({
     mydf <- geteventtotals()$alleventsdf
     mydf2 <- geteventtotals()$allreportsdf
     sourcedf <- mydf
-    names <- c('v1','t1' ,'v2', 't2')
-    values <- c('_exists_', getterm1var()  , getprrvarname() )
+    names <- c('v1','t1' ,'v3', 't3', 'v2', 't2'  )
+    values <- c('_exists_', getterm1var() , gettimevar(), gettimerange(), getprrvarname() )
     mydf[,2] <- numcoltohyper(mydf[ , 2], mydf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
     mydf[,1] <- coltohyper(mydf[,1], ifelse( getwhich()=='D', 'LRE', 'LR'), 
                            mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend()) )
@@ -963,9 +987,6 @@ output$cloudall <- renderPlot({
 
 ##
 # Tab 5: Counts For Drugs In Selected Reports
-output$cotitle <- renderText({ 
-  return( ( paste0('<h4>Most Common Drugs In Selected Reports</h4><br>') ) )
-})
 output$cotitle <- renderText({ 
   return( ( paste0('<h4>Most Common Drugs In Selected Reports</h4><br>') ) )
 })

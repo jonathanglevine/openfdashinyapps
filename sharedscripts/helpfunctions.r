@@ -220,7 +220,8 @@ l['overview_devclass'] <- '<h3>Data Reference</h3> <br>
 return(l[tabname])
 }
 
-tt <- function(tabname){
+#Help strings
+gettt <- function(){
   l <- vector('list' )
   #*1**********************************
   l <- append( l, c('cocloud' =  "Word cloud for concomitant medications") )
@@ -243,11 +244,11 @@ tt <- function(tabname){
   l <- append( l, c('freqtab1' =  'Frequency Table' ) )
   l <- append( l, c('freqtab2' =  'Counts' ) )
   l <- append( l, c('word1' =   '<b>Word Cloud</b>'  ) )
-  l <- append( l, c('word2' =  'Size of words are proportional to the frequency of the word.  Words are truncated to 20 characters' ) )
+  l <- append( l, c('word2' =  'Size of words are proportional to the frequency of the word.' ) )
   l <- append( l, c('cloudprrhead' =   'a<b>Word Cloud</b>'  ) )
-  l <- append( l, c('cloudprrtext' =  'aSize of words are proportional to the PRR of the word.  Words are truncated to 20 characters' ) )
-  l <- append( l, c('wordPRR' =  'Size of words are proportional to the PRR of the word.  Words are truncated to 20 characters' ) )
-  l <- append( l, c('wordLRT' =  'Size of words are proportional to the LLR of the word.  Words are truncated to 20 characters' ) )
+  l <- append( l, c('cloudprrtext' =  'Size of words are proportional to the PRR of the word.' ) )
+  l <- append( l, c('wordPRR' =  'Size of words are proportional to the PRR of the word.' ) )
+  l <- append( l, c('wordLRT' =  'Size of words are proportional to the LLR of the word.' ) )
   l <- append( l, c('textplot1' =   '<b>Text Plot</b>'  ) )
   l <- append( l, c('textplot2' =  'Plot of number of events and PRRs for terms.  Selecting a region of terms displays a table of the selected terms' ) )
   l <- append( l, c('dot1' =   'Dot Chart'  ) )
@@ -288,7 +289,12 @@ tt <- function(tabname){
    l <- append( l, c('prr4' =  "For example, a PRR of 2 for a drug event combination indicates that the proportion of reports for the drug-event combination is twice the proportion of the event in the overall database." ) )
    l <- append( l, c('prr5' =  paste( l['prr2'], l['prr3'],l['prr4'], l['event?'] ) ) )
    l <- append( l, c('prr_E' =  paste( l['prr2'], l['prr3'], l['prr4'], l['drug?'], l['dash?'] ) ) )
-   tabname <- tabname
+
 #   browser()
-                             return( l[tabname])
+                             return( l)
+}
+
+ttstrings <- gettt()
+tt <- function( tabname, l=ttstrings ){
+  return( l[tabname] )
 }

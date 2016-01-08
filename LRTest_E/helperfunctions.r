@@ -1,5 +1,5 @@
 getwhich <- function() {
-  return('D')
+  return('E')
 }
 getappname <- function() {
   return('LRTest_E')

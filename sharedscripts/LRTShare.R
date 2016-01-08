@@ -1,3 +1,65 @@
+popprr <- function()
+{
+  text <- "Likelihood ratio test results for most common terms."
+  head <- paste("LRT Results")
+  return( c(head=head, text=text) )
+}
+popcloudprr <- function()
+{
+  text <- "Size of words are proportional to the LRT value of the word."
+  head <- "Wordcloud of LRT Results"
+  return( c(head=head, text=text) )
+}
+poptextplot <- function()
+{
+  head <- "Text Plot"
+  text <- "Plot of number of events and LRT value for terms.  Selecting a region of terms displays a table of the selected terms"
+  return( c(head=head, text=text) )
+}
+
+popAnalyzedEventCountsforDrug <- function()
+{
+  text <- "Analyzed Event Counts for Drugs"
+  head <- "Frequency Table"
+  return( c(head=head, text=text) )
+}
+
+popcloudAnalyzedEventCountsforDrug <- function()
+{
+  text <- "Wordcloud of Analyzed Event Counts for Drugs"
+  head <- "Word Cloud"
+  return( c(head=head, text=text) )
+}
+
+popcloudall <- function()
+{
+  text <- "Wordcloud for All Event Counts for Drugs"
+  head <- "Word Cloud"
+  return( c(head=head, text=text) )
+}
+
+popall <- function()
+{
+  text <- "All Counts for Drugs"
+  head <- "Frequency Table"
+  return( c(head=head, text=text) )
+}
+
+
+popcloudcoquery <- function()
+{
+  text <- "Size of words are proportional to the frequency of the word."
+  head <- 'Word Cloud' 
+  return( c(head=head, text=text) )
+}
+
+
+# popcoquery <- function()
+# {
+#   text <- 'Frequency table for drugs found in selected reports. Drug name is linked to LRT results for drug \"L\" is linked to SPL labels for drug in openFDA. \"D\" is linked to a dashboard display for the drug.'
+#   head <- 'Concomitant Medications' 
+#   return( c(head=head, text=text) )
+# }
 
 
 calcLRTstats <- function(totals, combe, combr=NULL, allevents)

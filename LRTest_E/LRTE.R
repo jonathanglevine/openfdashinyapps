@@ -1,4 +1,10 @@
 
+popcoquery <- function()
+{
+  text <- 'Frequency table for events found in selected reports. Event name is linked to LRT results for event. \"M\" is linked to defintion of term.'
+  head <- 'Concomitant Medications' 
+  return( c(head=head, text=text) )
+}
 #*****************************************************
 shinyServer(function(input, output, session) {
   
@@ -17,7 +23,7 @@ shinyServer(function(input, output, session) {
   
   getqueryvars <- function( num = 1 ) {
    s <- vector(mode = "character", length = 7)
-   if (getwhich() == 'D')
+   if (getwhich() == 'E')
      {
      #Dashboard
      s[1] <- paste0( input$t1, '&v1=', input$v1 )
@@ -40,6 +46,12 @@ shinyServer(function(input, output, session) {
      #labelview
      s[7] <- paste0( input$t1, '&v1=', input$v1 )
      
+     #LRTest
+     s[8] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )
+     
+     #LRTestE
+     s[9] <- paste0( '', '&v1=', input$v1 , gettimeappend())
+     
    } else {
      #Dashboard
      s[1] <- paste0( '', '&v1=', input$v1 )
@@ -61,7 +73,13 @@ shinyServer(function(input, output, session) {
      
      #labelview
      s[7] <- paste0( '', '&v1=', input$v1, '&v2=', getbestterm1var() , '&t2=', input$t1)
-       
+     
+     #LRTest
+     s[8] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )
+     
+     #LRTestE
+     s[9] <- paste0( '', '&v1=', input$v1 , gettimeappend())
+     
      }
    return(s)
  }
@@ -103,7 +121,7 @@ shinyServer(function(input, output, session) {
     q <- geturlquery()
     anychanged()
     return(   "patient.reaction.reactionmeddrapt" )
-    if (getwhichprogram() == 'E'){
+    if (getwhichprogram() == 'D'){
       return(   "patient.reaction.reactionmeddrapt" )
     } else {
       return(input$v1)
@@ -113,7 +131,7 @@ shinyServer(function(input, output, session) {
   getprrvarname <- reactive({ 
     q <- geturlquery()
     return( paste0(input$v1, '.exact') )
-    if (getwhichprogram() != 'E'){
+    if (getwhichprogram() != 'D'){
       #PRR table of reactions
       return(   "patient.reaction.reactionmeddrapt.exact" )
     } else {
@@ -168,7 +186,12 @@ shinyServer(function(input, output, session) {
     return( c(start, end))
   }) 
   
-  
+  gettimeappend <- reactive({
+    geturlquery()
+    mytime <- getstartend()
+    s <- paste0('&start=', mytime[1] , '&end=', mytime[2] )
+    return( s )
+  }) 
   
 #   getlimit <- reactive({ 
 #     q <- geturlquery()
@@ -325,16 +348,18 @@ shinyServer(function(input, output, session) {
     myurl <- mydf$myurl
     mydf <- mydf$mydfE
     mydfsource <- mydf
-    names <- c('v1','t1' ,'v2', 't2', gettimevar())
-    values <- c(getbestterm1var(), getbestterm1(), getprrvarname() )
+#     names <- c('v1','t1' ,'v2', 't2', gettimevar())
+#     values <- c(getbestterm1var(), getbestterm1(), getprrvarname() )
+    names <- c('v1','t1' ,'v3', 't3', 'v2', 't2' )
+    values <- c(getbestterm1var(), getbestterm1(), gettimevar(), gettimerange(),  getprrvarname() )
     mydf[,2] <- numcoltohyper(mydf[ , 2], mydf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
-    if (getwhich()=='D')
+    if (getwhich()=='E')
       {
       mydf[,1] <- coltohyper(mydf[,1],  'LRE',
-                           mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact') )
+                           mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend() ) )
       } else {
         mydf[,1] <- coltohyper(mydf[,1],  'LRE',
-                               mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact' ) )
+                               mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend()  ) )
       }
     return( list(mydfE=mydf, myurl=(myurl), mydfsource = mydfsource  ) )
   })  
@@ -438,11 +463,13 @@ shinyServer(function(input, output, session) {
       medlinelinks <- makemedlinelink(sourcedf[,1], 'M')          
       mydf <- data.frame(M=medlinelinks, mydf) 
     }
-    names <- c('v1','t1')
-    values <- c(getbestterm1var() ) 
+#     names <- c('v1','t1')
+#     values <- c(getbestterm1var() )
+    names <- c('v1','v3', 't3','t1'  )
+    values <- c(getbestterm1var(), gettimevar(), gettimerange() ) 
     mydf[,'count'] <- numcoltohyper(mydf[ , 'count' ], mydf[ , 'term'], names, values, mybaseurl = getcururl(), addquotes=TRUE )
     mydf[,'term'] <- coltohyper(mydf[,'term'], whichapp , mybaseurl = getcururl(), 
-                                append= paste0( "&v1=", input$v1, "&useexact=", 'exact') )
+                                append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend() ) )
     names(mydf) <- mynames
     return( list( mydf=mydf, myurl=(myurl), sourcedf=sourcedf ) )
   }   
@@ -461,8 +488,8 @@ getindcounts <- reactive({
     mydf <- data.frame(mydf, cumsum= cumsum(mydf[,2]))
     sourcedf <- mydf
 #    medlinelinks <- makemedlinelink(sourcedf[,1], '?')
-    names <- c('v1','t1', 'v2', 't2')
-    values <- c( getbestterm1var(), getbestterm1(), paste0( 'patient.drug.drugindication', '.exact') )
+    names <- c('v1','t1' ,'v3', 't3', 'v2', 't2'  )
+    values <- c(getbestterm1var(), getbestterm1(), gettimevar(), gettimerange(), paste0( 'patient.drug.drugindication', '.exact') )
     mydf[,2] <- numcoltohyper(mydf[ , 2], mydf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
     mydf[,1] <- makemedlinelink(sourcedf[,1], mydf[,1])
     
@@ -518,7 +545,7 @@ getindcounts <- reactive({
     comb <- merge(drug1_event, allevent[, c('term', 'count')], by.x='term', by.y='term')
 #    comb2 <- merge(drug2_event, alldrug[, c('term', 'count')], by.x='term', by.y='term')
 #    print(totals)
-    if (getwhich()=='D')
+    if (getwhich()=='E')
       {
 #       #Total number of reports
 #       rn.. <- totals$total
@@ -565,7 +592,7 @@ getindcounts <- reactive({
     comb <- data.frame(comb, a, b, c, d, pi., nij,  n.j, ni.,  n..)
 #    comb2 <- data.frame(comb2, a, b, c, d, rpi., rnij,  rn.j, rni.,  rn..)
 #    print(  comb2[, 'rn..'])
-    if (getwhich() =='D'){ 
+    if (getwhich() =='E'){ 
       names <- c('v1', 'term1','term2')
       values <- c(getterm1var(), gsub( '"', '', getbestterm1(), fixed=TRUE  ) )
       cpa <- numcoltohyper( paste(comb[ , 1], 'CPA'), comb[ , 1], names, values, type='C', 
@@ -603,7 +630,7 @@ getindcounts <- reactive({
     values <- c('_exists_', getterm1var()  , getprrvarname() )
 #    comb[, 'count.y' ] <- numcoltohyper(comb[ , 'count.y' ], comb[ , 'term'], names, values , mybaseurl = getcururl(), addquotes=TRUE)
     comb[,'term'] <- coltohyper( comb[,'term'], 'LR' , 
-                            mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact') )
+                            mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend() ) )
     comb <- comb[order(comb$LLR, decreasing = TRUE),]
     sourcedf <- sourcedf[order(sourcedf$LLR, decreasing = TRUE),]
     row.names(comb)<- seq(1:nrow(comb))
@@ -657,11 +684,13 @@ getindcounts <- reactive({
     mydf <- geteventtotals()$alleventsdf
     mydf2 <- geteventtotals()$allreportsdf
     sourcedf <- mydf
-    names <- c('v1','t1' ,'v2', 't2')
-    values <- c('_exists_', getterm1var()  , getprrvarname() )
+#     names <- c('v1','t1' ,'v2', 't2')
+#     values <- c('_exists_', getterm1var()  , getprrvarname() )
+    names <- c('v1','t1' ,'v3', 't3', 'v2', 't2'  )
+    values <- c('_exists_', getterm1var() , gettimevar(), gettimerange(), getprrvarname() )
     mydf[,2] <- numcoltohyper(mydf[ , 2], mydf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
     mydf[,1] <- coltohyper(mydf[,1], 'LR', 
-                           mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact') )
+                           mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend() ) )
     return( list(mydf=mydf, mydf2= mydf2 , sourcedf=sourcedf) )
   })  
   
@@ -962,7 +991,19 @@ output$cotitle <- renderText({
   return( ( paste0('<h4>Most Common Events In Selected Reports</h4><br>') ) )
 })
 
+popcoquery <- function() {
+  text <- 'Frequency table for events found in selected reports. Event name is linked to LRT results for event \"m\" is linked to medline dictionary definition for event term'
+  head <- 'Concomitant Medications' 
+  return( c(head=head, text=text) )
+}
 
+
+popcoquery <- function() {
+  #text <- 'Frequency table for events found in selected reports. Event name is linked to LRT results for event \"m\" is linked to medline dictionary definition for event term'
+  text <- 'a'
+  head <- 'Concomitant Medications' 
+  return( c(head=head, text=text) )
+}
 coquery <- function(){  
   #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
   codrugs <- getcocountsD()$mydf
@@ -1097,7 +1138,7 @@ geturlquery <- reactive({
   q <- parseQueryString(session$clientData$url_search)
   updateNumericInput(session, "limit", value = q$limit)
   updateNumericInput(session, "limit2", value = q$limit)
-  if( getwhich()== 'D'){
+  if( getwhich()== 'E'){
     updateSelectizeInput(session, 't1', selected= q$drug)
     updateSelectizeInput(session, 't1', selected= q$t1)
     updateSelectizeInput(session, 'drugname', selected= q$drug)
@@ -1110,6 +1151,7 @@ geturlquery <- reactive({
 }
   updateSelectizeInput(session, inputId = "v1", selected = q$drugvar)
   updateSelectizeInput(session, inputId = "v1", selected = q$v1)
+  updateDateRangeInput(session, 'daterange', start = q$start, end = q$end)
   return(q)
 })
 # Return the components of the URL in a string:

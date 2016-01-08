@@ -7,7 +7,8 @@ exclude<- c(
   "016-knitr-pdf",
   "RR_D - dep",
   'tmp',
-  "sharedscripts"
+  "sharedscripts",
+  "downloads"
 )
 app <- setdiff(dirlist, exclude)
 # print(app)

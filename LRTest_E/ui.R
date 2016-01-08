@@ -109,10 +109,8 @@ shinyUI(fluidPage(
 #                                          popheads=c( tt('prr1'), tt('word1') ), 
 #                                          poptext=c( tt('prr5'), tt('word2') ) )
                          maketabset( c('prr', 'cloudprr', 'textplot'), 
-                                     types=c('html', "plot", 'plot'),
-                                     names=c("Table","Word Cloud", "Text Plot"), 
-                                     popheads = c(tt('prr1'), tt('word1'), tt('textplot1') ), 
-                                     poptext = c( tt('prr5'), tt('wordLRT'), tt('textplot2') ) )
+                                     names=c("Table","Word Cloud", "Text Plot"),
+                                     types=c('html', "plot", 'plot') )
                 ),
               tabPanel("Simulation Results for Drug Based LRT",
                        wellPanel( 
@@ -133,9 +131,7 @@ shinyUI(fluidPage(
                                        tt('gquery1'), tt('gquery2'),
                                        placement='bottom' )
                        ),
-                       wordcloudtabset('cloudAnalyzedEventCountsforDrug', 'AnalyzedEventCountsforDrug', 
-                                       popheads=c( tt('event1'), tt('word1') ), 
-                                       poptext=c( tt('event2'), tt('word2') )
+                       wordcloudtabset('cloudAnalyzedEventCountsforDrug', 'AnalyzedEventCountsforDrug'
                        )
               ),
                 tabPanel("Analyzed Drug Counts for All Events",
@@ -150,9 +146,7 @@ shinyUI(fluidPage(
                          htmlOutput_p( 'allquerytext' ,
                                      tt('gquery1'), tt('gquery2'),
                                      placement='bottom' ) ),
-                         wordcloudtabset('cloudall', 'all', 
-                                         popheads=c( tt('event1'), tt('word1') ), 
-                                         poptext=c( tt('event2'), tt('word2') ))
+                         wordcloudtabset('cloudall', 'all')
                 ),
                 tabPanel("Counts For Events In Selected Reports",
                          wellPanel( 
@@ -167,9 +161,7 @@ shinyUI(fluidPage(
                          htmlOutput_p( 'coquerytext' ,
                                      tt('gquery1'), tt('gquery2'),
                                      placement='bottom' ),
-                         wordcloudtabset('cloudcoquery', 'coquery',
-                                         popheads=c( tt('codrug1'), tt('word1') ), 
-                                         poptext=c( tt('codrug3'), tt('word2') ))
+                         wordcloudtabset('cloudcoquery', 'coquery')
                  ),
                 tabPanel("Drug Counts for Event",
                          wellPanel( 

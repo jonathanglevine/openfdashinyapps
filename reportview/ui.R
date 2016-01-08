@@ -7,23 +7,17 @@ getchoices <- function(){
   
   openfdavars <-  getallvars( allvars(), mytype = 'text', section= c('of', 'o2'))
   openfdavars <-  paste0( 'patient.drug.openfda.', openfdavars )
-  openfdavars <- c(openfdavars, paste0(openfdavars, '.exact'))
   
   headervars <- getallvars( allvars(), mytype = 'text', section= c('rh', 'se' ))
-  headervars <- c(headervars, paste0(headervars, '.exact'))
-  headervars <- c(headervars, paste0(headervars, '.exact'))
   
   patientvars <- getallvars( allvars(), mytype = 'text', section= c('pt', 'na'))
   patientvars <-  paste0( 'patient.', patientvars )
-  patientvars <- c(patientvars, paste0(patientvars, '.exact'))
   
   drugvars <- getallvars( allvars(), mytype = 'text', section= c('dr', 'as'))
   drugvars <-  paste0( 'patient.drug.', drugvars )
-  drugvars <- c(drugvars, paste0( drugvars, '.exact'))
   
   reactionvars <- getallvars( allvars(), mytype = 'text', section= c('re'))
   reactionvars <-  paste0( 'patient.reaction.', reactionvars )
-  reactionvars <- c(reactionvars, paste0( reactionvars, '.exact'))
 
   s <- c(othervars, openfdavars, headervars,  patientvars, drugvars, reactionvars)
   return(s)

@@ -877,7 +877,7 @@ getcururl <- reactive({
   
   output$applinks <- renderText({ 
     s <- makeapplinks(  getcururl(), getqueryvars( 1 ) ) 
-    write(s, file='')
+#    write(s, file='')
     return( makeapplinks(  getcururl(), getqueryvars( 1 ) )  )
   }) 
 })
