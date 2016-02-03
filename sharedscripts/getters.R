@@ -43,6 +43,10 @@ getlimit <- function( session ){
   return(session$input$limit)
 }
 
+getnumsims <- function( session ){ 
+  return(session$input$numsims)
+}
+
 getstart <- function( session ){
   return(session$input$start)
 }

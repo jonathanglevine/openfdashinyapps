@@ -94,7 +94,8 @@ allvars <- function(){
     'of_package_ndc',
     'of_pharm_class_epc',
     'of_generic_name',
-    'of_application_number'
-    
+    'of_application_number',
+    'of_dosage_form',
+    'of_is_original_packager'
   )
 }

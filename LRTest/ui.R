@@ -20,6 +20,12 @@ renderStart <- function() {
   
 }  
 
+renderNumsims <- function() { 
+  
+  ( htmlOutput('numsims') )
+  
+}  
+
 shinyUI(fluidPage(
                   fluidRow(
                     column(width=4,
@@ -55,6 +61,11 @@ shinyUI(fluidPage(
                    numericInput_p('start', 'Rank of first event', 1,
                                   1, 999, step=1, 
                                   HTML( tt('limit1') ), tt('limit2'),
+                                  placement='bottom'),
+                   
+                   numericInput_p('numsims', 'Number of Simulations', 1000,
+                                  1000, 50000, step=1, 
+                                  HTML( tt('numsims1') ), tt('numsims2'),
                                   placement='bottom')
                  ),
                  wellPanel(
@@ -64,7 +75,8 @@ shinyUI(fluidPage(
                    renderDrugName(),
                    radioButtons('useexact', 'Match drug name:', c('Exactly'='exact', 'Any Term'='any'), selected='any'),
                    renderLimit(),
-                   renderStart()
+                   renderStart(),
+                   renderNumsims()
                  ), 
                  dateRangeInput('daterange', 'Use Reports Between: ', start = '1989-6-30', end = Sys.Date()),
                  bsModal( 'modalExample', "Enter Variables", "tabBut", size = "small",
@@ -72,7 +84,7 @@ shinyUI(fluidPage(
                           textInput_p("drugname", "Name of Drug", 'Gadobenate', 
                                       HTML( tt('drugname1') ), tt('drugname2'),
                                       placement='left'), 
-                          numericInput_p('limit2', 'Maximum number of event terms', 5,
+                          numericInput_p('limit2', 'Maximum number of event terms', 50,
                                          1, 100, step=1, 
                                          HTML( tt('limit1') ), tt('limit2'),
                                          placement='left'),
@@ -81,6 +93,11 @@ shinyUI(fluidPage(
                                          1, 999, step=1, 
                                          HTML( tt('limit1') ), tt('limit2'),
                                          placement='left'),
+                          
+                          numericInput_p('numsims2', 'Number of Simulations', 1000,
+                                         1000, 50000, step=1, 
+                                         HTML( tt('numsims1') ), tt('numsims2'),
+                                         placement='bottom'),
                           #          dateRangeInput('daterange2', 'Date Report Was First Received by FDA.', start = '1989-6-30', end = Sys.Date() ),
                           bsButton("update", "Update Variables", style='primary')),
                  wellPanel(

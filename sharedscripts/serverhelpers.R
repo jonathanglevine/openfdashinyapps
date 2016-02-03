@@ -361,7 +361,7 @@ getbaseurl <- function( which, mycururl=NULL, appname= 'cpa' ){
   }  else if(which == 'RCLDEV' ){
     s <- 'devicerecallview'
   }  else if(which == 'ENFFD' ){
-    s <- 'deviceenforceview'
+    s <- 'foodrecallview'
   } else {
     s <- 'ChangePoint'
   }

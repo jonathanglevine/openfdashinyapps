@@ -204,6 +204,7 @@ shinyServer(function(input, output, session) {
       updateTextInput(session, "t1", value=( input$drugname ) )
       updateNumericInput(session, "limit", value= ( input$limit2 ) )
       updateNumericInput(session, "start", value= ( input$start2 ) )
+      updateNumericInput(session, "numsims", value= ( input$numsims2 ) )
     })
   })
   
@@ -258,6 +259,9 @@ shinyServer(function(input, output, session) {
                               'to', 
                               startfont, getstart( session )+getlimit( session )-1, endfont  ) ) 
   } )
+  
+  output$numsims <- renderText({ renderterm( getnumsims( session ), 'Number of simulations:', '' ) } )
+  
 #   output$limit <- renderText({
 #     s <- getlimit( session )
 #     if(s == '') {
@@ -662,7 +666,7 @@ getindcounts <- reactive({
     
     closeAlert(session, 'simalert')
     
-    numsims <- 1000
+    numsims <- getnumsims(session)
     mycritval <- getCritVal2(session, numsims, comb$n.j[1], comb$ni., comb$n..[1], comb$pi., .95)
     critval05 <- mycritval$critval
 #     mycritval2 <- getCritVal2(numsims, comb2$n.j[1], comb2$ni., comb2$n..[1], comb2$pi., .95)

@@ -19,7 +19,9 @@ getchoices <- function(){
   reactionvars <- getallvars( allvars(), mytype = 'text', section= c('re'))
   reactionvars <-  paste0( 'patient.reaction.', reactionvars )
 
-  s <- c(othervars, openfdavars, headervars,  patientvars, drugvars, reactionvars)
+  exactvars <- paste0( c( getdrugvarchoices(), 'patient.reaction.reactionmeddrapt' ), '.exact')
+  
+  s <- c(othervars, openfdavars, headervars,  patientvars, drugvars, reactionvars, exactvars)
   return(s)
 }
 

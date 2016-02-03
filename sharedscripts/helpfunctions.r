@@ -289,7 +289,10 @@ gettt <- function(){
    l <- append( l, c('prr4' =  "For example, a PRR of 2 for a drug event combination indicates that the proportion of reports for the drug-event combination is twice the proportion of the event in the overall database." ) )
    l <- append( l, c('prr5' =  paste( l['prr2'], l['prr3'],l['prr4'], l['event?'] ) ) )
    l <- append( l, c('prr_E' =  paste( l['prr2'], l['prr3'], l['prr4'], l['drug?'], l['dash?'] ) ) )
-
+   
+   l <- append( l, c('numsims1' =   'Number of Simulations'  ) )
+   l <- append( l, c('numsims2' =  'The number of simulations to perform.  Must be between 1,000 and 100,000' ) )
+   
 #   browser()
                              return( l)
 }
