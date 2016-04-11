@@ -83,41 +83,41 @@ output$mymodal <- renderText({
   return('')
 })
 
-updatevars2 <- reactive({
-  input$update2
-  isolate( {
-    updateTextInput(session, "v2", value=( input$v2_2 ) )
-    updateTextInput(session, "t2", value= ( input$t2_2 ) )
-  })
-})
+# updatevars2 <- reactive({
+#   input$update2
+#   isolate( {
+#     updateTextInput(session, "v2", value=( input$v2_2 ) )
+#     updateTextInput(session, "t2", value= ( input$t2_2 ) )
+#   })
+# })
+# 
+# 
+# output$mymodal2 <- renderText({
+#   if (input$update2 > 0)
+#   {
+#     updatevars2()    
+#     toggleModal(session, 'modalExample2', 'close')
+#   }
+#   return('')
+# })
+# 
+# updatevars3 <- reactive({
+#   input$update3
+#   isolate( {
+#     updateTextInput(session, "v3", value=( input$v3_2 ) )
+#     updateTextInput(session, "t3", value= ( input$t3_2 ) )
+#   })
+# })
 
-
-output$mymodal2 <- renderText({
-  if (input$update2 > 0)
-  {
-    updatevars2()    
-    toggleModal(session, 'modalExample2', 'close')
-  }
-  return('')
-})
-
-updatevars3 <- reactive({
-  input$update3
-  isolate( {
-    updateTextInput(session, "v3", value=( input$v3_2 ) )
-    updateTextInput(session, "t3", value= ( input$t3_2 ) )
-  })
-})
-
-
-output$mymodal3 <- renderText({
-  if (input$update3 > 0)
-  {
-    updatevars3()    
-    toggleModal(session, 'modalExample3', 'close')
-  }
-  return('')
-})
+# 
+# output$mymodal3 <- renderText({
+#   if (input$update3 > 0)
+#   {
+#     updatevars3()    
+#     toggleModal(session, 'modalExample3', 'close')
+#   }
+#   return('')
+# })
 
 output$ntext <- renderText( {
   ntext()
@@ -161,6 +161,140 @@ getquery <- reactive({
   return(out)
 })    
 
+getquerydownload <- function(skip=0, limit=10 ){
+  
+  #  print('query')
+  if (  gett1() == '' & gett2() == '' & gett3() == ''){
+    v1 = '_exists_'
+    t1 = 'spl_id'
+    v2 <- ''
+    t2 <- ''
+    v3 <- ''
+    t3 <- ''
+  } else {
+    v1 <- c(getv1(), getv2(), getv3())
+    t1 <- c(gett1(), gett2(),  gett3()) 
+  }
+  myurl <- buildURL(v1, t1,  limit=limit, skip=skip, type='label')
+  
+  mydf <- fda_fetch_p(session, myurl)
+  out <- c(df=mydf, url=myurl )
+  
+  return(out)
+}  
+
+
+getdownload <- function(tabname, skip=1, limit=100)
+{  
+  section <- varprefixes[[ which(tabnames== tabname ) ]]
+  special <-  c(
+    "Overview",
+    "ID and version", 
+    "Other",
+    "OpenFDA")
+  mydf <- getquerydownload(skip, limit)
+  if( !(tabname %in% special) )
+    {
+    tmp <- mydf$df.results
+    realcols <- names(tmp)
+    knowncols <- getallvars( allvars(),  'text', section=section)
+    mycols <- intersect (knowncols, realcols)
+    outdf <- extractdfcols(tmp, mycols, numrows=nrow(tmp) )
+    } else if( (tabname == 'OpenFDA') )
+    {
+      tmp <- mydf$df.results$openfda
+      realcols <- names(tmp)
+      knowncols <- getallvars( allvars(),  'text', section=varprefixes['openfda'])
+      mycols <- intersect (knowncols, realcols)
+      outdf <- extractdfcols(tmp, mycols, numrows=nrow(tmp) )
+    } else if( tabname == "ID and version" )
+    {
+    mycols <- c("set_id",
+                "id",
+                "version",
+                "effective_time")
+    tmp <- mydf$df.results
+    outdf <- tmp[mycols]
+  } else if( tabname == "Other" )
+    {  
+    tmp <- mydf$df.results
+    realcols <- gettextnames( names(tmp) )
+    realcols <- realcols[ which( realcols != 'openfda') ]
+    knowncols <- getallvars( allvars(),  'text')
+    mycols <- realcols
+    unknowncols <- setdiff(realcols , knowncols)
+    xxcols <- getallvars( allvars(),  'text', section='xx')
+    xxcols <- intersect (realcols, xxcols)
+    mycols <- union(unknowncols, xxcols)
+    outdf <- extractdfcols(tmp, mycols, numrows=nrow(tmp) )
+  } else if( tabname == "Overview" )
+  {  
+#     mycols <- c('unii',
+#                 'spl_id',
+#                 'product_ndc',
+#                 'substance_name',
+#                 'spl_set_id',
+#                 'product_type',
+#                 'pharm_class_cs',
+#                 'manufacturer_name',
+#                 'brand_name',
+#                 'pharm_class_pe',
+#                 'route',
+#                 'generic_name',
+#                 'application_number') 
+#     
+#     outdf2 <- getselectedcols(tmp, 'text', c('of'))
+#     tmp <- mydf$df.results
+#     outdf <- getselectedcols(tmp, 'text', c('sp', '11'))
+#     
+#     realcols <- names(tmp)
+#     knowncols <- getallvars( allvars(),  'text', section=section)
+#     mycols <- intersect (knowncols, realcols)
+    
+    tmp <- mydf$df.results$openfda 
+    realcols <- names(tmp)
+    mycols <- getallvars( allvars(),  'text', section=c('of'))
+    mycols <- intersect (mycols, realcols)
+    outdf2 <- extractdfcols(tmp, mycols, numrows=nrow(tmp) )
+    tmp <- mydf$df.results
+    realcols <- names(tmp)
+    mycols <- getallvars( allvars(),  'text', section=c('sp', '11') )
+    mycols <- intersect (mycols, realcols)
+    outdf <- extractdfcols(tmp, mycols, numrows=nrow(tmp) )
+    outdf <- data.frame(outdf, outdf2)
+  }
+  return( outdf ) 
+}
+
+getsection <- function( section )
+  {  
+#  browser()
+  mydf <- getquery()
+  tmp <- mydf$df.results
+  realcols <- names(tmp)
+  knowncols <- getallvars( allvars(),  'text', section= section)
+  mycols <- intersect (knowncols, realcols)
+  outdf <- extractdfcols(tmp, mycols)
+  return( outdf )
+}
+
+getsectiontab <- function( section )
+{ 
+  #   mydf <- getquery()
+  #   tmp <- mydf$df.results
+  #   realcols <- names(tmp)
+  #   knowncols <- getallvars( allvars(),  'table', section=c( '01', '02','03' ) )
+  # mycols <- intersect (knowncols, realcols)
+  #   outdf <- extractdfcols(tmp, mycols)
+  #   return(  gettables(outdf) ) 
+  mydf <- getquery()
+  tmp <- mydf$df.results
+  realcols <- names(tmp)
+  knowncols <- getallvars( allvars(),  'table', section= section)
+  mycols <- intersect (knowncols, realcols)
+  outdf <- extractdfcols(tmp, mycols)
+  return(  gettables(outdf) )
+}
 getreportid <- reactive({
   mydf <- getquery()
   tmp <- mydf$df.results
@@ -235,7 +369,7 @@ output$v1 <- renderText({
   if(s == '') {
     s <- 'None'
   }
-  out <- paste( '<br><b>Variable:<i>', s, '</i></b>' )
+  out <- renderterm2(s, 'Variable:' )
   return(out)
 })
 
@@ -244,7 +378,7 @@ output$v2 <- renderText({
   if(s == '') {
     s <- 'None'
   }
-  out <- paste( '<b>Variable:<i>', s, '</i></b>' )
+  out <- renderterm2(s, 'Variable:' )
   return(out)
 })
 
@@ -253,7 +387,7 @@ output$v3 <- renderText({
   if(s == '') {
     s <- 'None'
   }
-  out <- paste( '<b>Variable:<i>', s, '</i></b>' )
+  out <- renderterm2(s, 'Variable:')
   return(out)
 })
 output$t1 <- renderText({
@@ -261,7 +395,7 @@ output$t1 <- renderText({
   if(s == '') {
     s <- 'None'
   }
-  out <- paste( '<b>Term:<i>', s, '</i></b>' )
+  out <- renderterm2( s, 'Term:' )
   return(out)
 })
 output$t2 <- renderText({
@@ -269,7 +403,7 @@ output$t2 <- renderText({
   if(s == '') {
     s <- 'None'
   }
-  out <- paste( '<b>Term:<i>', s, '</i></b>' )
+  out <- renderterm2(s,  'Term:' )
   return(out)
 })
 output$t3 <- renderText({
@@ -277,7 +411,7 @@ output$t3 <- renderText({
   if(s == '') {
     s <- 'None'
   }
-  out <- paste( '<b>Term:<i>', s, '</i></b>' )
+  out <- renderterm2( s, 'Term:')
   return(out)
 })
 
@@ -335,23 +469,13 @@ output$indtitle <- renderText({
 })
 
 output$ind <- renderTable({ 
-  mydf <- getquery()
-  tmp <- mydf$df.results
-  realcols <- names(tmp)
-  knowncols <- getallvars( allvars(),  'text', section=c( '01', '02','03' ) )
-  mycols <- intersect (knowncols, realcols)
-  outdf <- extractdfcols(tmp, mycols)
+  outdf <- getsection( section=varprefixes[['one']] )
   return(outdf)
 })
 
 output$indtabs <- renderText({ 
-  mydf <- getquery()
-  tmp <- mydf$df.results
-  realcols <- names(tmp)
-  knowncols <- getallvars( allvars(),  'table', section=c( '01', '02','03' ) )
-mycols <- intersect (knowncols, realcols)
-  outdf <- extractdfcols(tmp, mycols)
-  return(  gettables(outdf) ) 
+  outdf <- getsectiontab( section=varprefixes[['one']] )
+  return(outdf)
 })
 
 #HEADER**********************
@@ -378,18 +502,14 @@ output$warntabletitle <- renderText({
 })
 
 output$warn <- renderTable({  
-  mydf <- getquery()
-  tmp <- mydf$df.results
-  outdf <- getselectedcols(tmp, 'text', c('04', '05'))
+  outdf <- getsection( section=varprefixes[['four']] )
   return(outdf)
 })
 
 
 output$warntabs <- renderText({ 
-  mydf <- getquery()
-  tmp <- mydf$df.results
-  outdf <- getselectedcols(tmp, 'table', c('04', '05'))
-  return(  gettables(outdf) ) 
+  outdf <- getsectiontab( section=varprefixes[['four']] )
+  return(outdf)
 })
 
 # 6. 7.  Adverse effects and interactions*********************************************
@@ -400,18 +520,13 @@ output$aeinttabletitle <- renderText({
 })
 
 output$aeint <- renderTable({  
-  mydf <- getquery()
-  tmp <- mydf$df.results
-  outdf <- getselectedcols(tmp, 'text', c('06', '07'))
+  outdf <- getsection( section=varprefixes[['six']] )
   return(outdf)
 })
 
 output$aetabs <- renderText({ 
-  mydf <- getquery()
-  tmp <- mydf$df.results
-  outdf <- getselectedcols(tmp, 'table', c('06', '07'))
-  s <- gettables(outdf)
-  return( s )
+  outdf <- getsectiontab( section=varprefixes[['six']] )
+  return(outdf)
 })
 
 # 8. special****************************
@@ -422,26 +537,14 @@ output$specialtabletitle <- renderText({
 })
 
 output$special <- renderTable({  
-  mydf <- getquery()
-  tmp <- mydf$df.results
-  realcols <- names(tmp)
-  knowncols <- getallvars( allvars(),  'text', section='08')
-  knowncols <- c(knowncols,  getallvars( allvars(),  'text', section='19') )
-  mycols <- intersect (knowncols, realcols)
-  outdf <- extractdfcols(tmp, mycols)
+  outdf <- getsection( section=varprefixes[['eight']] )
   return(outdf)
 })
 
 
 output$specialtabs <- renderText({  
-  mydf <- getquery()
-  tmp <- mydf$df.results
-  realcols <- names(tmp)
-  knowncols <- getallvars( allvars(),  'table', section='08')
-  knowncols <- c(knowncols,  getallvars( allvars(),  'table', section='19') )
-  mycols <- intersect (knowncols, realcols)
-  outdf <- extractdfcols(tmp, mycols)
-  return(  gettables(outdf) ) 
+  outdf <- getsectiontab( section=varprefixes[['eight']] )
+  return(outdf)
 })
 
 # 9. 10. ABUSEOD**************************
@@ -452,27 +555,14 @@ output$abuseodtabletitle <- renderText({
 })
 
 output$abuseod <- renderTable({  
-  mydf <- getquery()
-  tmp <- mydf$df.results
-  realcols <- names(tmp)
-  knowncols <- getallvars( allvars(),  'text', section='09')
-  knowncols <- c(knowncols,  getallvars( allvars(),  'text', section='10') )
-  mycols <- intersect (knowncols, realcols)
-  outdf <- extractdfcols(tmp, mycols)
+  outdf <- getsection( section=varprefixes[['nine']] )
   return(outdf)
 })
 
 
 output$abuseodtabs <- renderText({  
-  mydf <- getquery()
-  tmp <- mydf$df.results
-  realcols <- names(tmp)
-  knowncols <- getallvars( allvars(),  'table', section='09')
-  knowncols <- c(knowncols,  getallvars( allvars(),  'table', section='10') )
-  print(knowncols)
-  mycols <- intersect (knowncols, realcols)
-  outdf <- extractdfcols(tmp, mycols)
-  return(  gettables(outdf) ) 
+  outdf <- getsectiontab( section=varprefixes[['nine']] )
+  return(outdf)
 })
 
 
@@ -483,25 +573,13 @@ output$clinpharmtabletitle <- renderText({
 })
 
 output$clinpharm <- renderTable({  
-  #  Clinical pharmacology
-  mydf <- getquery()
-  tmp <- mydf$df.results
-  realcols <- names(tmp)
-  knowncols <- getallvars( allvars(),  'text', section='12')
-  mycols <- intersect (knowncols, realcols)
-  outdf <- extractdfcols(tmp, mycols)
+  outdf <- getsection( section=varprefixes[['twelve']] )
   return(outdf)
 })
 
 output$clinpharmtabs <- renderText({ 
-  mydf <- getquery()
-  tmp <- mydf$df.results
-  realcols <- names(tmp)
-  knowncols <- getallvars( allvars(),  'table', section='12')
-  mycols <- intersect (knowncols, realcols)
-  outdf <- extractdfcols(tmp, mycols)
-  s <- gettables(outdf)
-  return( s )
+  outdf <- getsectiontab( section=varprefixes[['twelve']] )
+  return(outdf)
 })
 
 
@@ -516,24 +594,14 @@ output$nonclintoxtabletitle <- renderText({
 
 output$nonclintox <- renderTable({  
 #  Nonclinical toxicology
- mydf <- getquery()
- tmp <- mydf$df.results
- realcols <- names(tmp)
- knowncols <- getallvars( allvars(),  'text', section='13')
- mycols <- intersect (knowncols, realcols)
- outdf <- extractdfcols(tmp, mycols)
+ outdf <- getsection( section=varprefixes[['thirteen']] )
  return(outdf)
 })
 
 
 output$nonclintoxtabs <- renderText({ 
-  mydf <- getquery()
-  tmp <- mydf$df.results
-  realcols <- names(tmp)
-  knowncols <- getallvars( allvars(),  'table', section='13')
-  mycols <- intersect (knowncols, realcols)
-  outdf <- extractdfcols(tmp, mycols)
-  return(  gettables(outdf) ) 
+  outdf <- getsectiontab( section=varprefixes[['thirteen']] )
+  return(outdf)
 })
 
 # 14 References****************************
@@ -546,27 +614,30 @@ output$referencetabletitle <- renderText({
 
 output$reference <- renderTable({  
   #  References
+  outdf <- getsection( section=varprefixes[['fourteen']] )
+  return(outdf)
+})
+
+referencedownload <- function(skip=1, limit=1)
+  {  
+  #  References
   
-  mydf <- getquery()
+  mydf <- getquerydownload()
   tmp <- mydf$df.results
   realcols <- names(tmp)
   knowncols <- getallvars( allvars(),  'text', section='14')
   knowncols <- c(knowncols,  getallvars( allvars(),  'text', section='15') )
   mycols <- intersect (knowncols, realcols)
-  outdf <- extractdfcols(tmp, mycols)
+  #  browser()
+  outdf <- extractdfcols(tmp, mycols, numrows=nrow(tmp) )
+  return(outdf)
+}
+
+output$referencetabs <- renderText({ 
+  outdf <- getsectiontab( section=varprefixes[['fourteen']] )
   return(outdf)
 })
 
-output$referencetabs <- renderText({ 
-  mydf <- getquery()
-  tmp <- mydf$df.results
-  realcols <- names(tmp)
-  knowncols <- getallvars( allvars(),  'table', section='14')
-  knowncols <- c(knowncols,  getallvars( allvars(),  'table', section='15') )
-  mycols <- intersect (knowncols, realcols)
-  outdf <- extractdfcols(tmp, mycols)
-  return(  gettables(outdf) ) 
-})
 
 # 16 Supply, storage, and handling****************************
 
@@ -576,24 +647,14 @@ output$supplytabletitle <- renderText({
 })
 
 output$supply <- renderTable({  
-  mydf <- getquery()
-  tmp <- mydf$df.results
-  realcols <- names(tmp)
-  knowncols <- getallvars( allvars(),  'text', section='16')
-  mycols <- intersect (knowncols, realcols)
-  outdf <- extractdfcols(tmp, mycols)
+  outdf <- getsection( section=varprefixes[['sixteen']] )
   return(outdf)
 })
 
 
 output$supplytabs <- renderText({ 
-  mydf <- getquery()
-  tmp <- mydf$df.results
-  realcols <- names(tmp)
-  knowncols <- getallvars( allvars(),  'table', section='16')
-  mycols <- intersect (knowncols, realcols)
-  outdf <- extractdfcols(tmp, mycols)
-  return(  gettables(outdf) ) 
+  outdf <- getsectiontab( section=varprefixes[['sixteen']] )
+  return(outdf)
 })
 
 
@@ -605,23 +666,13 @@ output$patinfotabletitle <- renderText({
 })
 
 output$patinfo <- renderTable({  
-  mydf <- getquery()
-  tmp <- mydf$df.results
-  realcols <- names(tmp)
-  knowncols <- getallvars( allvars(),  'text', section='17')
-  mycols <- intersect (knowncols, realcols)
-  outdf <- extractdfcols(tmp, mycols)
+  outdf <- getsection( section=varprefixes[['patient']] )
   return(outdf)
 })
 
-output$patinfotabs <- renderText({  
-  mydf <- getquery()
-  tmp <- mydf$df.results
-  realcols <- names(tmp)
-  knowncols <- getallvars( allvars(),  'table', section='17')
-  mycols <- intersect (knowncols, realcols)
-  outdf <- extractdfcols(tmp, mycols)
-  return(  gettables(outdf) ) 
+output$patinfotabs <- renderText({ 
+  outdf <- getsectiontab( section=varprefixes[['patient']] )
+  return(outdf)
 })
 
 
@@ -634,8 +685,8 @@ output$patientdrugopenfdatabletitle <- renderText({
 output$openfda <- renderTable({  
   mydf <- getquery()
   tmp <- mydf$df.results$openfda
-  outdf <- getselectedcols(tmp, 'text', c('of') )
-  return( outdf )
+  outdf <- getselectedcols(tmp, 'text', varprefixes['openfda'] )
+  return( outdf ) 
 })
 
 # Other fields*********************************************
@@ -665,7 +716,6 @@ output$othertabs <- renderText({
   tmp <- mydf$df.results
   realcols <- gettablenames( names(tmp) )
   knowncols <- getallvars( allvars(),  'table')
-  print(knowncols)
   mycols <- setdiff(realcols , knowncols)
   print(mycols)
   outdf <- extractdfcols(tmp, realcols)
@@ -713,7 +763,7 @@ output$currec <- renderUI({
   numrecs <- mydf$df.meta$results$total
   maxlim <- getopenfdamaxrecords( numrecs )
   updateSliderInput( session, 'skip', value=getskip()+1, min=1, step= 1, max=maxlim)
-  out <- paste( 'Viewing #', getskip()+1, 'of', numrecs, 'selected reports')
+  out <- paste( 'Viewing #', getskip()+1, 'of', numrecs, 'Selected Labels')
   return(out)
 })
 
@@ -739,26 +789,33 @@ output$date1 <- renderText({
 
 geturlquery <- observe({
    q <- parseQueryString(session$clientData$url_search)
+   
+   if(!is.null(q$t1) )
+    { 
     t1 <- gsub('"[', '[', q$t1, fixed=TRUE)
     t1 <- gsub(']"', ']', t1, fixed=TRUE)
     t1 <- gsub('""', '"', t1, fixed=TRUE)
     updateTextInput(session, "t1", value = t1)
     updateTextInput(session, "t1_2", value = t1)
-  
-  t2 <- gsub('"[', '[', q$t2, fixed=TRUE)
-  t2 <- gsub(']"', ']', t2, fixed=TRUE)
-  t2 <- gsub('""', '"', t2, fixed=TRUE)
-  updateTextInput(session, "t2", value = t2)
-  updateTextInput(session, "t2_2", value = t2)
+    }
+   
+   if(!is.null(q$t2) )
+    { 
+    t2 <- gsub('"[', '[', q$t2, fixed=TRUE)
+    t2 <- gsub(']"', ']', t2, fixed=TRUE)
+    t2 <- gsub('""', '"', t2, fixed=TRUE)
+    updateTextInput(session, "t2", value = t2)
+    updateTextInput(session, "t2_2", value = t2)
+    }
   
   if(!is.null(q$t3) )
-  {  
-  t3 <- gsub('"[', '[', q$t3, fixed=TRUE)
-  t3 <- gsub(']"', ']', t3, fixed=TRUE)
-  t3 <- gsub('""', '"', t3, fixed=TRUE)
-  updateTextInput(session, "t3", value = t3)
-  updateTextInput(session, "t3_2", value = t3)
-  }
+    {  
+    t3 <- gsub('"[', '[', q$t3, fixed=TRUE)
+    t3 <- gsub(']"', ']', t3, fixed=TRUE)
+    t3 <- gsub('""', '"', t3, fixed=TRUE)
+    updateTextInput(session, "t3", value = t3)
+    updateTextInput(session, "t3_2", value = t3)
+    }
   
 
 if(!is.null(q$v1) )
@@ -787,19 +844,14 @@ if(!is.null(q$v3) )
 #   return(q)
 })
 
-output$help <- renderUI({
-  #  print('test')
-  s <- input$sidetabs
- # print(s)
-  out <- switch(s, 
-                'Graph Options'=loadhelp('graphoptions'),
-                'Data Options'=loadhelp('dataoptions'),
-                'Axis Options'=loadhelp('axisoptions'),
-                'Select Vars'= loadhelp('selectvars'),
-                'Load Data'= loadhelp('loaddata'),
-                'Overview'= loadhelp('overview'),
-                'Overviewside'= loadhelp('overviewside'),
-                'none')
-  return( HTML(out[[1]]) )
-})
+output$downloadData <- downloadHandler(
+  filename = function() {
+    paste(input$download, Sys.time(), '.csv', sep='')
+  },
+  content = function(con) {
+    write.csv( getdownload( input$download, skip = input$downloadstart-1 ), con)
+  },
+  contentType="text/csv"
+)
+
 })

@@ -69,7 +69,7 @@ shinyUI(fluidPage(
                                   placement='bottom')
                  ),
                  wellPanel(
-                   bsButton("tabBut", "Select Drug and # of Events...", 
+                   bsButton("tabBut", "Select Drug, # of Events, and # of simulations...", 
                             style='primary'),
                    br(),
                    renderDrugName(),
@@ -104,7 +104,7 @@ shinyUI(fluidPage(
                    helpText( HTML('<b>Down Load Report</b>') ),
                    radioButtons('format', 'Document format', c('PDF', 'HTML', 'Word'),
                                 inline = TRUE),
-                   downloadButton('downloadReport')
+                   downloadButton('downloadReport', 'Download LRT Report')
                  ),
                  
                  bsAlert("alert")
@@ -128,7 +128,8 @@ shinyUI(fluidPage(
 #                                          poptext=c( tt('prr5'), tt('word2') ) )
                          maketabset( c('prr', 'cloudprr', 'textplot'), 
                                      types=c('html', "plot", 'plot'),
-                                     names=c("Table","Word Cloud", "Text Plot") )
+                                     names=c("Table","Word Cloud", "Text Plot") ),
+                        downloadButton('downloadData', 'Download LRT Results')
                 ),
               tabPanel("Simulation Results for Event Based LRT",
                        wellPanel( 

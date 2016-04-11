@@ -339,6 +339,13 @@ shinyServer(function(input, output, session) {
     return( list(mydfE=mydfE, mydfR = mydfR, myurl=mylist$myurl  ) )
   })  
   
+  getdownload <- function(tabname, skip=1, limit=100)
+  {  
+    mydf <- prrsource()
+    outdf <- prr()
+    outdf[[2]] <- mydf[['term']]
+    return( outdf[, 2:5 ] ) 
+  }
   
   #Build table containing drug-event pairs
   getdrugcountstable <- reactive({
@@ -771,7 +778,13 @@ prr <- reactive({
   if (getterm1(session)=="") {
     return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, Count=0, PRR=0, ROR=0))
   }
-  checkdf( getprr()[['comb']], getsearchtype() )
+  return( checkdf( getprr()[['comb']], getsearchtype() ) )
+})
+prrsource <- reactive({  
+  if (getterm1(session)=="") {
+    return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, Count=0, PRR=0, ROR=0))
+  }
+  return( checkdf( getprr()[['sourcedf']], getsearchtype() ) )
 })
 output$prr <- renderTable({   
   prr()
@@ -1212,6 +1225,15 @@ getcururl <- reactive({
       ))
       file.rename(out, file)
     }
+  )
+ output$downloadData <- downloadHandler(
+    filename = function() {
+      paste(input$t1, Sys.time(), '.csv', sep='')
+    },
+    content = function(con) {
+      write.csv( getdownload( NULL, skip = 1 ), con, row.names=FALSE)
+    },
+    contentType="text/csv"
   )
   
 })

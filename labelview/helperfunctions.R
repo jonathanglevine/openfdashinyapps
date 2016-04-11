@@ -99,3 +99,64 @@ allvars <- function(){
     'of_is_original_packager'
   )
 }
+tabnames <- c(
+            "Overview",
+            "Meta Data",  
+            "ID and version", 
+            "1. Indications, usage, and 2,3.dosage",
+            "4., 5. Warnings and precautions", 
+            "6. Adverse effects and 7. interactions",  
+            "8. Special populations", 
+            "10. Abuse and 9. overdosage", 
+            "12. Clinical pharmacology",
+            "13. Nonclinical toxicology", 
+            "14. Clinical Studies and 15. References",
+            "16. Supply, storage, and handling", 
+            "Patient information",
+            "Other",
+            "OpenFDA", 
+            "Other Apps", 
+            'Data Reference',
+            'About',
+            'Download Section'
+              )
+
+# tabnames <- c(
+#   overview="Overview",
+#   meta="Meta Data",  
+#   id="ID and version", 
+#   one="1. Indications, usage, and 2,3.dosage",
+#   four="4., 5. Warnings and precautions", 
+#   six="6. Adverse effects and 7. interactions",  
+#   eight="8. Special populations", 
+#   ten="10. Abuse and 9. overdosage", 
+#   twelve="12. Clinical pharmacology",
+#   thirtenn="13. Nonclinical toxicology", 
+#   fourteen="14. Clinical Studies and 15. References",
+#   sixteen="16. Supply, storage, and handling", 
+#   patient="Patient information",
+#   other="Other",
+#   openfda="OpenFDA", 
+#   apps="Other Apps", 
+#   data='Data Reference',
+#   about='About',
+#   'Download Section' = 'downloads'
+# )
+
+varprefixes <- list( 
+  overview="Overview",
+  meta="Meta Data",  
+  id="ID and version", 
+  one=c( '01', '02','03' ),
+  four=c('04', '05'), 
+  six=c('06', '07'),  
+  eight=c('08', '19'), 
+  nine=c('09', '10'), 
+  twelve="12",
+  thirteen="13", 
+  fourteen=c("14", "15"),
+  sixteen="16", 
+  patient="17",
+  other= '',
+  openfda="of"
+)

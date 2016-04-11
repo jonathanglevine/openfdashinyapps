@@ -339,10 +339,11 @@ output$headertabletitle <- renderText({
   
 output$headertable <- renderTable({  
     mydf <- getquery()
-    tmp <- mydf$df$results
+    tmp <- mydf$df$results 
+    mynames <- getallvars( allvars(), mytype = 'text', section= c('rh'))
   if ( is.data.frame(tmp) )
 {
-    mydf <- extractdfcols( tmp, names(tmp) )
+    mydf <- extractdfcols( tmp, mynames, numrows = nrow(tmp) )
     return(mydf) 
   } else  {return(data.frame(Drug=paste( 'No events for drug', input$t1), Count=0))}
   })

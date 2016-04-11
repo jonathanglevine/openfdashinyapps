@@ -16,15 +16,30 @@ renderLimit <- function() {
 
 renderStart <- function() { 
   
+
   ( htmlOutput('start') )
   
 }  
 
 renderStart2 <- function() { 
-  
   ( htmlOutput('start2') )
   
 }  
+
+getcurtab <- function() { 
+#  browser()
+#  print( textOutput('curtab') )
+  
+#  browser()
+   s<-( textOutput('limit') )
+   print(s)
+#   ss <- strsplit( as.character(s), ">" , fixed=TRUE)
+#   ss <- strsplit( as.character(ss[[1]][2]), "<" , fixed=TRUE)
+#   print(ss[[1]][1])
+  return(  "PRR and ROR Results" )
+  
+}  
+
 shinyUI(fluidPage(
                   fluidRow(
                     column(width=4,
@@ -70,6 +85,7 @@ shinyUI(fluidPage(
                    renderStart()
                  ), 
                  dateRangeInput('daterange', 'Use Reports Between: ', start = '1989-6-30', end = Sys.Date()),
+                 
                  bsModal( 'modalExample', "Enter Variables", "tabBut", size = "small",
                           htmlOutput('mymodal'), 
                           textInput_p("drugname", "Name of Drug", '', 
@@ -208,7 +224,7 @@ shinyUI(fluidPage(
 #                            verbatimTextOutput( 'urlquery' )
 #                          )
 #                 ),
-              id='maintabs', selected="PRR and ROR Results"
+              id='maintabs', selected=  "PRR and ROR Results" 
             )
           )
         )

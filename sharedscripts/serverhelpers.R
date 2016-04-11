@@ -1,9 +1,18 @@
 
+
 require(RColorBrewer)
 require(wordcloud)
 require('curl')
 require('httr')
 require(stringi)
+if (!require('openfda') ) {
+  devtools::install_github("ropenhealth/openfda")
+  library(openfda)
+  print('loaded open FDA')
+}
+
+#Temporary fix for peer certificate error
+#httr::set_config( config( ssl_verifypeer = 0L ) )
 
 #require(GOsummaries)
 
@@ -11,6 +20,10 @@ SOURCEDIR <- '../sharedscripts/'
 if (!file.exists( paste0( SOURCEDIR, 'key.r') ))
 {
   SOURCEDIR <- 'sharedscripts/'
+} else {
+  #Temporary fix for peer certificate error
+  httr::set_config( config( ssl_verifypeer = 0L ) )
+  print(SOURCEDIR)
 }
 source( paste0( SOURCEDIR, 'key.r') )
 
@@ -710,7 +723,9 @@ getvalvectfromlink <- function(instr)
   return(s)
 }
 
-mytp <- function(x, y, w, refline=1, mytitle="Text Plot for Terms.  Draw a box around terms to see more details") { 
+mytp <- function(x, y, w, refline=1, 
+                 mytitle="Text Plot for Terms.  Draw a box around terms to see more details",
+                 myylab='LLR') { 
   # browser()
   mycex=1
   if (length(w) > 0)
@@ -726,7 +741,7 @@ mytp <- function(x, y, w, refline=1, mytitle="Text Plot for Terms.  Draw a box a
          ylim = c( 1.0, max(y, na.rm = TRUE) ),
          log='y',
          xlab= 'Number of Events',
-         ylab= 'LLR',
+         ylab= myylab,
          col='red',
          main=mytitle,
          cex=mycex)
@@ -735,7 +750,7 @@ mytp <- function(x, y, w, refline=1, mytitle="Text Plot for Terms.  Draw a box a
     plot(1,1,type="n", 
          log='y',
          xlab= 'Number of Events',
-         ylab= 'LLR',
+         ylab= myylab,
          col='red',
          main='Please enter a term',
          cex=mycex)
@@ -758,7 +773,18 @@ renderterm <-  function( term, label, label2='' ){
   }
   return(out)
 }
-
+renderterm2 <-  function( term, label, label2='' ){ 
+  if(term == '') {
+    term <- 'None'
+  }
+  if (label2 != '')
+  { 
+    out <- paste( '<br><b>', label, '<i><font color="dodgerblue" size="4">', term, '</font></i><br>', label2,'</b>' )
+  } else {
+    out <- paste( '<br><b>', label, '<i><font color="dodgerblue" size="4" >', term, '</font></i></b>' )
+  }
+  return(out)
+}
 getterm1description <- function(exact, term)
   {
   s <- term
@@ -896,20 +922,24 @@ getdf <- function(mydf, name, message='Empty Table')
   
 }
 
-extractdfcols <- function(tmp, mycols)
+extractdfcols <- function(tmp, mycols, numrows=1)
 { 
+ # browser()
   numcols <- length(mycols)
-  #browser()
+ # browser()
   outdf <- data.frame( matrix( ncol=numcols, nrow=0 ), stringsAsFactors = FALSE )
   mynames <- names(tmp)
-  outdf <- rbind(outdf, as.character( rep('None', numcols) ) )
+  for ( i in 1:numrows)
+  {
+    outdf <- rbind(outdf, as.character( rep('None', numcols) ) )
+  }
   names(outdf) <- mycols
   cols <- mynames %in% mycols 
   for (i in seq_along(cols))
   {
     if (cols[i])
     { 
-      if ( length(tmp[[i]]) == 1 )
+      if ( length(tmp[[i]]) > 0 )
       {
         outdf[ mynames[i] ] <- listtostring(tmp[[i]], ';')
       } else {

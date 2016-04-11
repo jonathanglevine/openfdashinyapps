@@ -66,7 +66,7 @@ shinyUI(fluidPage(
                                   placement='bottom')
                  ),
                  wellPanel(
-                   bsButton("tabBut", "Select Event and # of Events...", 
+                   bsButton("tabBut", "Select Drug, # of Events, and # of simulations...", 
                             style='primary'),
                    br(),
                    renderDrugName(),
@@ -103,7 +103,7 @@ shinyUI(fluidPage(
                    helpText( HTML('<b>Down Load Report</b>') ),
                    radioButtons('format', 'Document format', c('PDF', 'HTML', 'Word'),
                                 inline = TRUE),
-                   downloadButton('downloadReport')
+                   downloadButton('downloadReport', 'Download LRT Report')
                    ),
                  
                  bsAlert("alert")

@@ -3,7 +3,6 @@ library(shiny)
 source('sourcedir.R')
 
 
-
 getchoices <- function(){
   openfdavars <- getallvars(allvars(), section = c('of') ) 
   openfdavars <-  paste0( 'openfda.', openfdavars )
@@ -60,6 +59,9 @@ rendert3 <- function() {
   ( htmlOutput( 't3' ) )
   
 } 
+
+myselected <- "Overview"
+
 shinyUI(fluidPage(
                   fluidRow(
                     column(width=4,
@@ -94,7 +96,15 @@ column(width=3,
            condition = "1 == 2",
          selectizeInput('v1', 'Variable 1', getchoices() , width='100%', 
                         selected=getchoices()[1], options=list(create=TRUE, maxOptions=1000) ),
-         textInput("t1", "Terms", '')
+         textInput("t1", "Terms", ''),
+         selectizeInput('v2', 'Variable 2', getchoices() , width='100%', 
+                        
+                        selected='product_type', options=list(create=TRUE, maxOptions=1000) ),
+         textInput("t2", "Terms", value = 'prescription'),
+         
+         selectizeInput("v3", "Variable 3", c( getdatechoices(), getchoices() ) , width='100%', 
+                        selected='is_original_packager' , options=list(create=TRUE, maxOptions=1000) ), 
+         textInput("t3", "Terms", value = 'yes')
          )
         ,
          bsModal( 'modalExample1', "Enter Variables", "tabBut", size = "small",
@@ -102,49 +112,27 @@ column(width=3,
                   selectizeInput('v1_2', 'Variable 1', getchoices() , width='100%', 
                                  selected=getchoices()[1], options=list(create=TRUE, maxOptions=1000) ),
                   textInput("t1_2", "Terms", ''), 
+                  
                   selectizeInput('v2_2', 'Variable 2', getchoices() , width='100%', 
-                                 selected=getchoices()[53], options=list(create=TRUE, maxOptions=1000) ),
-                  textInput("t2_2", "Terms", ''),
+                                 selected='product_type', options=list(create=TRUE, maxOptions=1000) ),
+                  textInput("t2_2", "Terms", value = 'prescription'),
+                  
                   selectizeInput("v3_2", "Variable 3", c( getdatechoices(), getchoices() ) , width='100%', 
-                                 selected='effective_time' , options=list(create=TRUE, maxOptions=1000) ), 
-                  textInput("t3_2", "Terms", '[20000101+TO+20170101]'),
+                                 selected='is_original_packager' , options=list(create=TRUE, maxOptions=1000) ), 
+                  textInput("t3_2", "Terms", 'yes'),
                   bsButton("update", "Update Variables", style='primary') )
          )
-       ,
+       , 
        wellPanel( 
-#         bsButton("tabBut2", "Change Values...", style='primary'),
          renderv2(),
-         rendert2(),
-         conditionalPanel(
-           condition = "1 == 2",
-         selectizeInput('v2', 'Variable 2', getchoices() , width='100%', 
-                        selected=getchoices()[53], options=list(create=TRUE, maxOptions=1000) ),
-         textInput("t2", "Terms", '')
-         )
-#          bsModal( 'modalExample2', "Enter Variables", "tabBut2", size = "small",
-#                   htmlOutput('mymodal2'), 
-#                   selectizeInput('v2_2', 'Variable 2', getchoices() , width='100%', 
-#                                  selected=getchoices()[1], options=list(create=TRUE, maxOptions=1000) ),
-#                   textInput("t2_2", "Terms", ''),
-#                               bsButton("update2", "Update Variables", style='primary') )
-         ),
+         rendert2()
+       )
+       , 
        wellPanel( 
-#         bsButton("tabBut3", "Change Values...", style='primary'),
          renderv3(),
-         rendert3(),
-         conditionalPanel(
-           condition = "1 == 2",
-         selectizeInput("v3", "Variable 3", c( getdatechoices(), getchoices() ) , width='100%', 
-                        selected='effective_time' , options=list(create=TRUE, maxOptions=1000) ), 
-         textInput("t3", "Terms", '[20000101+TO+20170101]')
-          )
-#        bsModal( 'modalExample3', "Enter Variables", "tabBut3", size = "small",
-#                 htmlOutput('mymodal3'), 
-#                 selectizeInput("v3_2", "Variable 3", c( getdatechoices(), getchoices() ) , width='100%', 
-#                                selected='effective_time' , options=list(create=TRUE, maxOptions=1000) ), 
-#                 textInput("t3_2", "Terms", '[20000101+TO+20170101]'),
-#                 bsButton("update3", "Update Variables", style='primary') )
-       ),
+         rendert3()
+       )
+       ,
 bsAlert("alert")
 ),
 column(width=9,
@@ -266,9 +254,14 @@ column(width=9,
                 ),
                 tabPanel('About', 
                          img(src='l_openFDA.png'),
-                         HTML( (loadhelp('about') ) )  )
-                , type='pill',
-              id='maintabs', position='right', selected="Overview"
+                         HTML( (loadhelp('about') ) )  ),
+                tabPanel(tabnames[ 19 ],
+                         numericInput("downloadstart", "Start Record", value = 1, min=0, step=1),
+                         downloadButton('downloadData', 'Download 100 records starting at "Start Record"'),
+                        radioButtons('download', 'Select Section to Download', tabnames[c (1, 3:15) ], selected = 'Overview')
+                )
+                , type='tabs',
+              id='maintabs', position='right', selected=myselected
             )
       )
     )

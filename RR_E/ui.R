@@ -164,11 +164,11 @@ shinyUI(fluidPage(
                                                  placement='bottom' )
                                  ),
                                  wellPanel(
-                                   htmlOutput( 'cotitleE' )
+                                   htmlOutput( 'cotitleD' )
                                  ),
-                                 htmlOutput_p( 'coquerytextE' ,
-                                               tt('gquery1'), tt('gquery2'),
-                                               placement='bottom' ),
+#                                  htmlOutput_p( 'coquerytextE' ,
+#                                                tt('gquery1'), tt('gquery2'),
+#                                                placement='bottom' ),
                                  wordcloudtabset('cloudcoqueryE', 'coqueryE',
                                                  popheads=c( tt('codrug1'), tt('word1') ), 
                                                  poptext=c( tt('codrug3'), tt('word2') ))

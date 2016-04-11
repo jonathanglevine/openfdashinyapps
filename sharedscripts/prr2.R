@@ -207,6 +207,7 @@ shinyServer(function(input, output, session) {
     updateSelectizeInput(session, inputId = "v1", selected = q$v1)
     updateRadioButtons( session, 'useexact', selected = q$useexact )
     updateDateRangeInput(session, 'daterange', start = q$start, end = q$end)
+    updateTabsetPanel(session, 'maintabs', selected=q$curtab)
     return(q)
   })
   
@@ -230,7 +231,9 @@ shinyServer(function(input, output, session) {
                                      startfont, getstart( session )+getlimit( session )-1, endfont  ) ) 
     } )
 
-  
+  output$curtab <- renderText({
+    renderterm( input$limit )
+    } ) 
 # General Reactives ============================================================
     #************************************
     # Get Drug-Event Query
@@ -273,17 +276,18 @@ shinyServer(function(input, output, session) {
     values <- c(getbestvar1(), getbestterm1(), gettimevar(), gettimerange(),  getprrvarname() )
     mydf[,2] <- numcoltohyper(mydf[ , 2], mydf[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
     mydfAll[,2] <- numcoltohyper(mydfAll[ , 2], mydfAll[ , 1], names, values, mybaseurl = getcururl(), addquotes=TRUE )
+#    browser()
     if (getwhich()=='D')
       {
       mydf[,1] <- coltohyper(mydf[,1],  'E',
-                           mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend() )  )
+                               mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend() )  )
       mydfAll[,1] <- coltohyper(mydfAll[,1],  'E',
-                             mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend() ) )
-      } else {
-        mydf[,1] <- coltohyper(mydf[,1],  'D',
                                mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend() ) )
-        mydfAll[,1] <- coltohyper(mydfAll[,1],  'D',
-                               mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact'), gettimeappend() )
+      } else {
+      mydf[,1] <- coltohyper(mydf[,1],  'D',
+                               mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend() ) )
+      mydfAll[,1] <- coltohyper(mydfAll[,1],  'D',
+                               mybaseurl = getcururl(), append= paste0( "&v1=", input$v1, "&useexact=", 'exact', gettimeappend() ) )
       }
     return( list(mydf=mydf, myurl=(myurl), mydfsource = mydfsource, mydfAll=mydfAll, mydfallsource = mydfallsource  ) )
   })  
@@ -589,7 +593,7 @@ textplot <- reactive({
   }
   #  browser()
   #plot with no overlap and all words visible
-  return ( mytp(x, y, w) )
+  return ( mytp(x, y, w, myylab='PRR') )
   #cloudout(mydf, paste('PRR for Events in Reports That Contain', getterm1( session ) ) )  
 })
 output$textplot <- renderPlot({ 
@@ -695,6 +699,9 @@ output$querycotextE <- renderText({
 output$cotitleE <- renderText({ 
   return( paste('<h4>Most common events for', getterm1( session ), '</h4><br>') )
 })
+output$cotitleD <- renderText({ 
+  return( paste('<h4>Most common drugs for', getterm1( session ), '</h4><br>') )
+})
 
 cloudcoqueryE <- reactive({ 
   cloudout( getdrugcountstable()$mydfallsource, 
@@ -707,10 +714,13 @@ output$cloudcoqueryE <- renderPlot({
 }, height=900, width=900 )
 
 coqueryE <- reactive({  
-  tableout(mydf = getdrugcountstable()$mydfAll,  
+  out <- tableout(mydf = getdrugcountstable()$mydfAll,  
            mynames = c('Term', paste( 'Counts for', getterm1( session ) ) ),
            error = paste( 'No Events for', getterm1( session ) )
-  )
+            )
+  
+#  browser()
+  return(out)
 })
 output$coqueryE <- renderTable({  
   coqueryE()
