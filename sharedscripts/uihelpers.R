@@ -169,21 +169,22 @@ plotOutput_p <- function(plot, pophead=NULL, poptext=NULL, placement='top', ...)
 }  
 
 selectInput_p <- function( name, label, values, pophead=NULL, poptext=NULL, 
-                           placement='bottom', usepop=TRUE, ...)
+                           placement='bottom', usepop=TRUE, selected=NULL,  ...)
 {
+#  browser()
   s <- getpopstrings( name, pophead, poptext)
   pophead <- s['pophead']
   poptext <- s['poptext']
   if( !is.null( pophead ) & usepop )
   {
     popify( 
-      selectInput(name, label , values), 
+      selectInput(name, label , values, selected), 
       HTML( pophead ), poptext,
       placement=placement)
   }
   else
   {
-    selectInput(name, label , values)
+    selectInput(name, label , values, selected)
   }
 } 
 

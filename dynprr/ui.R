@@ -46,10 +46,13 @@ shinyUI(fluidPage(
   sidebarLayout(
     sidebarPanel(
       tabsetPanel(
-        tabPanel('Select Drug',
+        tabPanel('Select Inputs',
                  selectInput_p("v1", 'Drug Variable' ,getdrugvarchoices(), 
                                              HTML( tt('drugvar1') ), tt('drugvar2'),
                                              placement='top'), 
+                 selectInput_p("v2", 'Time Variable' , c('receivedate', 'receiptdate'), 
+                               HTML( tt('drugvar1') ), tt('drugvar2'),
+                               placement='top', selected='receiptdate'), 
                  conditionalPanel(
                    condition = "1 == 2",
                  textInput_p("t1", "Name of Drug", '', 
@@ -82,7 +85,7 @@ shinyUI(fluidPage(
                  bsAlert("alert")
                  )
         ,
-    id='sidetabs', selected='Select Drug')
+    id='sidetabs', selected='Select Inputs')
     ),
     mainPanel(
       bsAlert("alert2"),

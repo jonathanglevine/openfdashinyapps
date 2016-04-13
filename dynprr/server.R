@@ -52,7 +52,8 @@ getaevar <- function(){
 }
 
 gettimevar <- function(){
-  return ('receivedate')
+  anychanged()
+  return (input$v2)
 }
 
 getexactdrugvar <- function(){
