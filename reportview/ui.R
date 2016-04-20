@@ -26,7 +26,7 @@ getchoices <- function(){
 }
 
 getdatechoices <- function(){
-  s <- c( 'receivedate' )
+  s <- c( 'receiptdate','receivedate' )
   return(s)
 }
 
@@ -158,7 +158,7 @@ fluidRow(
              condition = "1 == 2",
              selectizeInput('v2', 'Variable 2', getchoices() , width='100%', 
                             selected=getchoices()[1], options=list(create=TRUE, maxOptions=1000) ),
-             textInput("t2", "Terms", 'bob')
+             textInput("t2", "Terms", '')
            )
          ),
          wellPanel( 

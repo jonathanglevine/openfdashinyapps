@@ -1,5 +1,14 @@
 require(shinyBS)
 
+# HTML <- function(s1, s2=NULL)
+# {
+#   # browser()
+#   out1 <- as.character( s1 )
+#   out2 <- s2
+#   out <- shiny::HTML(out1, out2)
+#   return(out)
+# }
+
 getdrugvarchoices <- function(){
   openfdavars <- c( 
     'generic_name',

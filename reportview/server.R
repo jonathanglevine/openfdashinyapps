@@ -243,21 +243,21 @@ output$overviewtable <- renderTable({
       availnames <-  myvars %in% names(mydf)
       mydfheader <- mydf[, myvars[availnames] ]
       mynames <- names(mydfheader)
-      mynames <- gsub('safetyreportid', 'Case_ID', mynames, fixed=TRUE )
-      mynames <- gsub('receivedate', 'First_Received', mynames, fixed=TRUE )
-      mynames <- gsub('receiptdate', 'Most_Recent', mynames, fixed=TRUE )
-      mynames <- gsub('companynumb', 'Company_Number', mynames, fixed=TRUE )
+#       mynames <- gsub('safetyreportid', 'Case_ID', mynames, fixed=TRUE )
+#       mynames <- gsub('receivedate', 'First_Received', mynames, fixed=TRUE )
+#       mynames <- gsub('receiptdate', 'Most_Recent', mynames, fixed=TRUE )
+#       mynames <- gsub('companynumb', 'Company_Number', mynames, fixed=TRUE )
       names(mydfheader) <- mynames
       
-      if ('First_Received' %in% names(mydfheader))
+      if ('receiptdate' %in% names(mydfheader))
       { 
-        mydfheader[ , 'First_Received'] <- ymd(mydfheader[ , 'First_Received']) 
-        mydfheader[ , 'First_Received'] <- format(mydfheader[ , 'First_Received'], "%m/%d/%y") 
+        mydfheader[ , 'receiptdate'] <- ymd(mydfheader[ , 'receiptdate']) 
+        mydfheader[ , 'receiptdate'] <- format(mydfheader[ , 'receiptdate'], "%m/%d/%y") 
       }
-      if ('Most_Recent' %in% names(mydfheader))
+      if ('receivedate' %in% names(mydfheader))
       { 
-        mydfheader[ , 'Most_Recent'] <- ymd(mydfheader[ , 'Most_Recent']) 
-        mydfheader[ , 'Most_Recent'] <- format(mydfheader[ , 'Most_Recent'], "%m/%d/%y") 
+        mydfheader[ , 'receivedate'] <- ymd(mydfheader[ , 'receivedate']) 
+        mydfheader[ , 'receivedate'] <- format(mydfheader[ , 'receivedate'], "%m/%d/%y") 
       }
       myvars <-  c("seriousnesscongenitalanomali",
                     "seriousnessdeath",
@@ -580,6 +580,9 @@ output$applinks <- renderText({
 
 geturlquery <- observe({
    q <- parseQueryString(session$clientData$url_search)
+   updateTabsetPanel(session, 'maintabs', selected=q$curtab)
+   
+   
     t1 <- gsub('"[', '[', q$t1, fixed=TRUE)
     t1 <- gsub(']"', ']', t1, fixed=TRUE)
     t1 <- gsub('""', '"', t1, fixed=TRUE)

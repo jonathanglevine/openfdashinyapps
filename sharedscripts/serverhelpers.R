@@ -23,7 +23,7 @@ if (!file.exists( paste0( SOURCEDIR, 'key.r') ))
 } else {
   #Temporary fix for peer certificate error
   httr::set_config( config( ssl_verifypeer = 0L ) )
-  print(SOURCEDIR)
+#  print(SOURCEDIR)
 }
 source( paste0( SOURCEDIR, 'key.r') )
 

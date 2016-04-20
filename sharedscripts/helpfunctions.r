@@ -2,7 +2,7 @@
 
 loadhelp <- function(tabname){
   
-  l <- vector('list', 10)
+  l <- vector('character', 10)
   names(l) <- c('selectvars', 'dataoptions', 'graphoptions', 'axisoptions',
                 'loaddata', 'overview', 'overviewside', 'LRT', 'overview_501', 'overview_devclass')
 #*1**********************************
@@ -222,7 +222,7 @@ return(l[tabname])
 
 #Help strings
 gettt <- function(){
-  l <- vector('list' )
+  l <- vector('character' )
   #*1**********************************
   l <- append( l, c('cocloud' =  "Word cloud for concomitant medications") )
   
@@ -299,5 +299,6 @@ gettt <- function(){
 
 ttstrings <- gettt()
 tt <- function( tabname, l=ttstrings ){
-  return( l[tabname] )
+  out <- l[tabname]
+  return( as.character(out) )
 }

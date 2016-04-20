@@ -788,7 +788,8 @@ output$date1 <- renderText({
 })
 
 geturlquery <- observe({
-   q <- parseQueryString(session$clientData$url_search)
+   q <- parseQueryString(session$clientData$url_search)`
+   updateTabsetPanel(session, 'maintabs', selected=q$curtab)
    
    if(!is.null(q$t1) )
     { 
