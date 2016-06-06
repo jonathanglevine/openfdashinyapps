@@ -1,0 +1,8 @@
+name: RR_D
+account: openfda
+server: shinyapps.io
+bundleId: 305281
+url: https://openfda.shinyapps.io/RR_D
+when: 1446770306.50373
+asMultiple: FALSE
+asStatic: FALSE

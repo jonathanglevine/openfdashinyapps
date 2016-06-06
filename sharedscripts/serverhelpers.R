@@ -788,13 +788,14 @@ renderterm2 <-  function( term, label, label2='' ){
 getterm1description <- function(exact, term)
   {
   s <- term
+  print(s)
   if ( exact!= 'exact' )
     {
     s <- gsub(' ', ' or ', term, fixed=TRUE)
     s <- gsub('or AND or', ' AND ', s, fixed=TRUE)
     s <- gsub('or OR or', ' OR ', s, fixed=TRUE)
     } else { 
-    s <- paste0('"', term, '"')
+    s <- paste0( "'", term, "'")
     }
   return( s )
 }

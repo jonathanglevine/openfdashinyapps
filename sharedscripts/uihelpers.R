@@ -34,16 +34,20 @@ getdevicevarchoices <- function(){
 }
 
 wordcloudtabset <- function(cloud, table, 
-                            names=c( "Table","Word Cloud" ), 
+                            names=c( "Tables","Word Cloud" ), 
                             popheads = c('Frequency Table',tt('word1') ), 
                             poptext = c('Counts', tt('word2') ) ) { 
 
   tabsetPanel(
     tabPanel(names[1],
              wellPanel(
+               if (names[1] == 'Tables'){
                htmlOutput_p(table,
-               HTML( popheads[1] ), HTML(poptext[1]),
-               placement='top')
+                            HTML( popheads[1] ), HTML(poptext[1]),
+                            placement='top')
+               } else if (names[1] == 'datatable') {
+                 dataTableOutput( table )
+               }
              )        
     ),
   tabPanel( names[2],
@@ -74,7 +78,11 @@ maketabset <- function( outputs, types=c('html', 'plot'),
                  htmlOutput_p(outputs[1],
                               HTML( popheads[1] ), HTML(poptext[1]),
                               placement='top' )
-               } else {
+               } else if ( types[1] == 'datatable' )
+               {
+               dataTableOutput( outputs[1] )
+               }
+               else {
                  plotOutput(outputs[1])
                }
              )

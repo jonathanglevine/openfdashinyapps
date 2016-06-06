@@ -71,10 +71,6 @@ shinyServer(function(input, output, session) {
    return(s)
  }
   
-  gettimevar <- function(){
-    return ('receivedate')
-  }
-  
   getsearchtype <- reactive({ 
     if (getwhichprogram() == 'E'){
       return(   "Reaction" )
@@ -136,7 +132,7 @@ shinyServer(function(input, output, session) {
   }
   
   gettimevar <- function(){
-    return ('receivedate')
+    return ('receiptdate')
   }
   
   gettimerange <- reactive({

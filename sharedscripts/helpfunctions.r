@@ -21,23 +21,14 @@ the drug are for the event than the proportion of events in the rest of the data
 For example, a PRR of 2 for a drug event combination indicates that the proportion of reports for
 the drug-event combination is twice the proportion of the event in the overall database<br>
 <br>
-PRR = (m/n)/( (M-m)/(N-n) )<br>
+PRR = (A/AB)/( (AC-A)/(N-AB) )<br>
  Where <br>
-      m = #reports with drug and event<br>
-      n = #reports with drug<br>
-      M = #reports with event in database<br>
+      A = #reports with drug and event<br>
+      AB = #reports with drug<br>
+      AC = #reports with event in database<br>
       N = #reports in database<br>
 <br><br>
-A similar measure is the reporting odds ratio (ROR).<br>
-<br><br>
-ROR = (m/d)/(M/D)
-<br><br>
- Where <br>
-      m = #reports with drug and event<br>
-      d = n-m<br>
-      M = #reports with event in database<br>
-      D = N-M<br>
-<br><br>
+
 
  Often PRR analyses are stratified by various attributes of
  the report such as patient age, gender, report date in an effort to improve precision.
