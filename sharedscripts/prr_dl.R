@@ -163,6 +163,12 @@ shinyServer(function(input, output, session) {
     return( c(start, end))
   })
   
+  getquarter <- reactive({
+    geturlquery()
+    end <- input$quarter
+    return( end )
+  })
+  
   gettimeappend <- reactive({
     geturlquery()
     mytime <- getstartend()
@@ -224,6 +230,9 @@ shinyServer(function(input, output, session) {
     s <- getterm1description( exact='exact', getterm1( session ) )
     renderterm( s, 'Drug Name:') 
     } )
+  output$term1 <- renderText({ 
+    getterm1( session ) 
+  } )
   output$eventname <- renderText({ 
     s <- getterm1description( input$useexact, getterm1( session ) )
     renderterm( s, 'Event Name:') 
@@ -396,39 +405,25 @@ shinyServer(function(input, output, session) {
 #Get total counts in database for each event and Total reports in database
   gettotals<- reactive({
     geturlquery()
-    v <- c( '_exists_', '_exists_', gettimevar() )
-    t <- c( getprrvarname(), getbestvar1(), gettimerange() )
-    totalurl <- buildURL(v, t,  count='', limit=1)
-    totalreports <- fda_fetch_p( session, totalurl, flag=NULL) 
-    total <- totalreports$meta$results$total
-    v <- c( '_exists_', '_exists_', getbestvar1(), gettimevar() )
-    t <- c( getbestvar1(), getprrvarname(), getbestterm1(), gettimerange() )
-    totaldrugurl <- buildURL( v, t, count='', limit=1, addplus = FALSE)
-    totaldrugreports <- fda_fetch_p( session, totaldrugurl, flag=paste( 'No Reports for',
-                                    ifelse(getwhich()=='D', 'drug', 'event' ), getterm1( session ), '<br>' ) ) 
-#     if ( length( totaldrugreports )==0 )
-#       {
-#       totaldrugurl <- buildURL( v= getvar1(), t=getterm1( session ), count='', limit=1)
-# 
-#       totaldrugreports <- fda_fetch_p( session, totaldrugurl, flag= paste( 'No Reports of Drug', getterm1( session ) ) )
-#       }
+    comb <- getprr()$mydf
     
-    totaldrug <- totaldrugreports$meta$results$total
+    totaldrug <- comb[ 1, 'AB']
+    total <- totaldrug + comb[ 1, 'CD']
     
-    adjust <- total/totaldrug
-    out <- list(total=total, totaldrug=totaldrug, adjust=adjust, 
-                totalurl=(totalurl), totaldrugurl=(totaldrugurl) )
+    out <- list(total=total, totaldrug=totaldrug)
+    return(out)
   }) 
 
   
   #Calculate PRR and put in merged table
   getprr <- reactive({
     geturlquery() 
-    if ( !exists( 'asprrdf' ) ){
-      load( 'data/asprrdf.RData')
+    curquarter <- getquarter()
+    if ( !exists( 'detable' ) ){
     }
-    prrtab <- asprrdf
-    s <- getterm1( session)
+    load( paste0('data/quarters/', curquarter, '.RData') )
+    prrtab <- detable
+    s <- getterm1()
     curinds <-  which( prrtab$d==s & prrtab$A >= getlimit( session ) )
     mydf <- prrtab[ curinds ,]
     mydf <- mydf[order(mydf$A, decreasing = TRUE ),]
@@ -437,20 +432,20 @@ shinyServer(function(input, output, session) {
     
     mydf <- mydf[order(mydf$PRR, decreasing = TRUE ),]
     comb <- data.frame(Event=mydf$e, drugcounts= as.integer(mydf$A), allcounts=mydf$AC, 
-                       PRR=mydf$PRR, LB=mydf$lb, UB=mydf$ub, row.names=NULL)
+                       PRR= round(mydf$PRR, digits=2), LB=round(mydf$lb, digits=2), UB=round(mydf$ub, digits=2), row.names=NULL)
     names( comb ) <- c('Preferred Term',	paste('Counts for', s), 	'Counts for All Reports', 	
                        'PRR', 'Lower 95% CI for PRR', 'Upper 95% CI for PRR')
     colname <- 'Drug Name'
     
-    return( list(comb=comb, eventcounts=eventcounts, alleventcounts=alleventcounts, colname=colname, prrtab=prrtab ) )
+    return( list(comb=comb, eventcounts=eventcounts, alleventcounts=alleventcounts, colname=colname, prrtab=prrtab, mydf=mydf ) )
   })
   
   getmaptable <- reactive({
     geturlquery() 
-    if ( !exists( 'mpmap' ) ){
-      load( 'data/mpmap.RData')
+    if ( !exists( 'cleanmpmap' ) ){
+      load( 'data/cleanmpmap.RData')
     }
-    outmap <- mpmap
+    outmap <- cleanmpmap
     s <- getterm1( session)
     if ( s=='')
     {
@@ -462,7 +457,7 @@ shinyServer(function(input, output, session) {
       mydf <- mydf[order(mydf$medicinalproduct ),]
       }
  #   browser()
-    return( list(mydf=mydf ) )
+    return( list(mydf=mydf, outmap = outmap ) )
   })
   #Calculate PRR and put in merged table
   oldgetprr <- reactive({
@@ -688,7 +683,7 @@ output$querytitle <- renderText({
 })
 
 cloudquery <- reactive({  
-  cloudout(getdrugcountstable()$mydfsource, paste('Terms in Reports That Contain', getterm1( session ) ))
+  cloudout( getprr()$eventcounts, paste('Terms in Reports That Contain', getterm1( session ) ))
 })
 output$cloudquery <- renderPlot({  
   cloudquery()
@@ -728,7 +723,7 @@ output$alltitle <- renderText({
 })
 
 cloudall <- reactive({  
-  cloudout(geteventtotalstable()$sourcedf, 
+  cloudout(getprr()$alleventcounts, 
            paste('Events in Reports That Contain', getterm1( session ) ) ) 
 })
 output$cloudall <- renderPlot({  
@@ -754,11 +749,11 @@ output$all2 <- renderDataTable({
            mynames = c('Term', paste( 'Counts for All Reports') ),
            error = paste( 'No events for', getsearchtype(), getterm1( session ) ) 
   )
-})
+}, escape = FALSE)
 
 
 output$maptable <- renderDataTable({  
-  tableout(mydf = getmaptable()$mydf, 
+  tableout(mydf = getmaptable()$outmap, 
            error = paste( 'No events for', getsearchtype(), getterm1( session ) ) 
   )
 })
@@ -775,9 +770,21 @@ output$fulltable <- renderDataTable({
 # tabPanel("Ranked Drug/Event Counts for Event/Drug 'cotextE' 'querycotextE'  'cotitleE',
 # 'coquerytextE' ,'cloudcoqueryE', 'coqueryE'
 
+output$mpvalues <- renderText({ 
+  mydf = getmaptable()$mydf
+  if ( getterm1(session)!= '')
+    {
+    s <- paste0(mydf$medicinalproduct, collapse =   '\n')
+      return( s )
+  }
+  else
+  {
+    return( 'No drug selected')
+  }
+})
 
 output$mpmaptext <- renderText({ 
-  paste( 'Activesubstancename represents medicinalproduct values as shown in the table below.', '<a href="mpmap.csv"  target="_blank">Download activesubstancename-medicinalproduct mapping </a>' , '' )
+  paste( 'Activesubstancename represents medicinalproduct values as shown in the table below.', '<a href="cleanmpmap.csv"  target="_blank">Download complete activesubstancename-medicinalproduct mapping </a>' , '' )
 })
 output$cotitleE <- renderText({ 
   return( paste('<h4>Most common events for', getterm1( session ), '</h4><br>') )

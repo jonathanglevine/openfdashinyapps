@@ -86,9 +86,12 @@ getcloud <- function(mydf, scale1=9, name=1, freq=2, title='Terms', scale=NULL) 
   mylabel <- title
   #text(.5, .5, labels=mylabel, cex=2)
   mydf[ which( is.nan(mydf[,freq] ) ), freq] <- 1
-wordcloud(mydf[, name], mydf[,freq], max.words = 200 ,
+  if( nrow(mydf) > 1 )
+    {
+    wordcloud(mydf[, name], mydf[,freq], max.words = 200 ,
                 color=brewer.pal(8, "Dark2"), random.order=FALSE, 
                 scale=scale )
+    }
   text(.5, 1, labels=mylabel, cex=1.5)
 
 }
@@ -226,7 +229,7 @@ makecomb <- function(session, mydf1, mydf2, totals, type, sortvar='prr' ){
   rrr <- prrd( n.., ni., n.j, nij ) 
   ror <- ror( n.., ni., n.j, nij )
   llr <- LLR( n.., ni., n.j, nij )  
-  comb <- data.frame(comb, prr=prr, ror=ror, nij, ni., n.j, n..)   
+  comb <- data.frame(comb, prr=round( prr, digits = 2), ror=ror, nij, ni., n.j, n..)   
   comb <- comb[order(comb[, sortvar], decreasing = TRUE),]
   row.names(comb)<- seq(1:nrow(comb))
   return( list(comb=comb, ror=ror) )

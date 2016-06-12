@@ -34,6 +34,7 @@ getdevicevarchoices <- function(){
 }
 
 wordcloudtabset <- function(cloud, table, 
+                            types= c('table', 'plot'),
                             names=c( "Tables","Word Cloud" ), 
                             popheads = c('Frequency Table',tt('word1') ), 
                             poptext = c('Counts', tt('word2') ) ) { 
@@ -41,17 +42,17 @@ wordcloudtabset <- function(cloud, table,
   tabsetPanel(
     tabPanel(names[1],
              wellPanel(
-               if (names[1] == 'Tables'){
+               if (types[1] == 'table'){
                htmlOutput_p(table,
                             HTML( popheads[1] ), HTML(poptext[1]),
                             placement='top')
-               } else if (names[1] == 'datatable') {
+               } else if (types[1] == 'datatable') {
                  dataTableOutput( table )
                }
              )        
     ),
   tabPanel( names[2],
-            if (names[2] == 'Tables'){
+            if (types[2] == 'table'){
               htmlOutput_p(cloud,
                            HTML( popheads[2] ), HTML(poptext[2]),
                            placement='top')
@@ -60,7 +61,7 @@ wordcloudtabset <- function(cloud, table,
                         HTML( popheads[2] ), poptext[2],
                         placement='top')
             }
-    )
+    ), selected = names[1]
   )
 }
 maketabset <- function( outputs, types=c('html', 'plot'), 
@@ -69,7 +70,6 @@ maketabset <- function( outputs, types=c('html', 'plot'),
                         popheads = c(NULL, NULL, NULL) , 
                         poptext = c(NULL, NULL, NULL ) 
                         ) { 
-  
   
   tabsetPanel(
     tabPanel(names[1],
@@ -107,6 +107,10 @@ maketabset <- function( outputs, types=c('html', 'plot'),
                            htmlOutput_p(outputs[3],
                                         HTML( popheads[3] ), HTML(poptext[3]),
                                         placement='top')
+                           } else if (types[3] == 'html'){
+                             htmlOutput_p(outputs[3],
+                                          HTML( popheads[3] ), HTML(poptext[3]),
+                                          placement='top')
                          } else {
                            plotOutput_p(outputs[3],
                                         HTML( popheads[3] ), HTML(poptext[3]),
@@ -121,7 +125,43 @@ maketabset <- function( outputs, types=c('html', 'plot'),
   )
 }
 
-
+maketabset2 <- function( outputs, types=c('html', 'plot'), 
+                        names=c( "Table2","Word Cloud2" )
+                        , 
+                        popheads = c(NULL, NULL, NULL) , 
+                        poptext = c(NULL, NULL, NULL ) 
+) { 
+  
+  tabsetPanel(
+    tabPanel(names[1],
+             wellPanel(
+               if (types[1] == 'html'){
+                 htmlOutput_p(outputs[1],
+                              HTML( popheads[1] ), HTML(poptext[1]),
+                              placement='top' )
+               } else if ( types[1] == 'datatable' )
+               {
+                 dataTableOutput( outputs[1] )
+               }
+               else {
+                 plotOutput(outputs[1])
+               }
+             )
+    ),
+    tabPanel( names[2],
+              if (types[2] == 'html'){
+                htmlOutput_p(outputs[2],
+                             HTML( popheads[2] ), HTML(poptext[2]),
+                             placement='top')
+              } else {
+                plotOutput_p(outputs[2],
+                             HTML( popheads[2] ), HTML(poptext[2]),
+                             placement='top')
+              }
+    )
+    , selected = names[1]
+  )
+}
 getpopstrings <- function( myname, pophead, poptext )
   {
   helpfunname <- paste0('pop', myname )

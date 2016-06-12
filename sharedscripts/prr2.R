@@ -322,13 +322,13 @@ shinyServer(function(input, output, session) {
         drugvar <- paste0( "&v1=", drugvar )
         medlinelinks <- coltohyper( paste0( '%22' , sourcedf[,1], '%22' ), 'L', 
                                   mybaseurl = getcururl(), 
-                                  display= rep('L', nrow( sourcedf ) ), 
+                                  display= rep('Label', nrow( sourcedf ) ), 
                                   append= drugvar )
         
         drugvar <- paste0( "&v1=", input$v1 )
         dashlinks <- coltohyper( paste0( '%22' , sourcedf[, 1 ], '%22' ), 'DA', 
                                  mybaseurl = getcururl(), 
-                                 display= rep('D', nrow( sourcedf ) ), 
+                                 display= rep('Dashboard', nrow( sourcedf ) ), 
                                  append= drugvar )
         mydf <- data.frame(D=dashlinks, L=medlinelinks, mydf)
         mynames <- c( 'D', 'L', colname, 'Count') 
@@ -341,7 +341,7 @@ shinyServer(function(input, output, session) {
     } else {
       colname <- 'Preferred Term'
       mynames <- c('M', colname, 'Count') 
-      medlinelinks <- makemedlinelink(sourcedf[,1], 'M')          
+      medlinelinks <- makemedlinelink(sourcedf[,1], 'Definition')          
       mydf <- data.frame(M=medlinelinks, mydf) 
     }
     names <- c('v1','t1','v3', 't3', 'v2', 't2')
@@ -432,7 +432,7 @@ shinyServer(function(input, output, session) {
 #      print( names(comb) )
       sourcedf <- comb
       colname <- 'Preferred Term'
-      iname <- 'M'
+      iname <- 'Definition'
       medlinelinks <- makemedlinelink(sourcedf[,2], iname)
     } else { 
       names <- c('exactD', 'exactE','v2','term2', 'v1','term1')
@@ -442,7 +442,7 @@ shinyServer(function(input, output, session) {
       comb <- data.frame(D='D', M='L' , comb, links$dynprr, links$cpa,  comb$ror, comb$nij)
       sourcedf <- comb
       colname <- 'Drug Name'
-      iname <- c( 'D', 'L')
+      iname <- c( 'Dashboard', 'Label')
       if (input$v1 != 'patient.drug.medicinalproduct')
       {
         drugvarname <- gsub( "patient.drug.","" , input$v1 , fixed=TRUE)
@@ -559,6 +559,11 @@ output$prr <- renderTable({
  prr()
 },  sanitize.text.function = function(x) x)
 
+output$prr2 <- renderDataTable({  
+  prr()
+}, options = list(
+  autoWidth = TRUE,
+  columnDefs = list(list(width = '50', targets = c(1, 2) ) ) ),  escape = FALSE )
 
 
 cloudprr <- reactive({  
@@ -643,9 +648,13 @@ output$specifieddrug <- renderTable({
   tableout(mydf = getdrugcountstable()$mydf,  
            mynames = c('Term', paste( 'Counts for', getterm1( session ) ) ),
            error = paste( 'No results for', getterm1( session ) ) )
-},  sanitize.text.function = function(x) x)
+},  height=120, sanitize.text.function = function(x) x)
 
-
+output$specifieddrug2 <- renderDataTable({ 
+  tableout(mydf = getdrugcountstable()$mydf,  
+           mynames = c('Term', paste( 'Counts for', getterm1( session ) ) ),
+           error = paste( 'No results for', getterm1( session ) ) )
+},  escape=FALSE )
 
 # tabPanel("Event Counts for All Drugs" 'alltext' 'queryalltext' 
 #'alltitle'  'allquerytext' ,'cloudall', 'all'
@@ -682,6 +691,13 @@ output$all <- renderTable({
            error = paste( 'No events for', getsearchtype(), getterm1( session ) ) 
   )
 }, sanitize.text.function = function(x) x)
+
+output$all2 <- renderDataTable({  
+  tableout(mydf = geteventtotalstable()$mydf, 
+           mynames = c('Term', paste( 'Counts for All Reports'), 'Query' ),
+           error = paste( 'No events for', getsearchtype(), getterm1( session ) ) 
+  )
+}, escape=FALSE)
 
 
 # tabPanel("Ranked Drug/Event Counts for Event/Drug 'cotextE' 'querycotextE'  'cotitleE',
@@ -722,7 +738,9 @@ output$coqueryE <- renderTable({
   coqueryE()
 }, sanitize.text.function = function(x) x)
 
-
+output$coqueryE2 <- renderDataTable({  
+  coqueryE()
+}, escape=FALSE)
 
 # tabPanel("Counts For Drugs In Selected Reports"
 #            htmlOutput( 'cotext' ),
@@ -752,6 +770,18 @@ output$coquery <- renderTable({
            error = paste( 'No', getsearchtype(), 'for', getterm1( session ) ))
 }, sanitize.text.function = function(x) x)
 
+
+coquery2 <- reactive({  
+  
+  out <- tableout(mydf = getcocounts()$mydf,  mynames = NULL,
+           error = paste( 'No', getsearchtype(), 'for', getterm1( session ) ))
+  return(out)
+} )
+
+output$coquery2 <- renderDataTable({  
+  coquery2()
+},  escape=FALSE )
+
 # tabPanel("Counts For Indications In Selected Reports"
 #            htmlOutput( 'indtext' ),
 #            htmlOutput_p( 'queryindtext' ,
@@ -771,7 +801,10 @@ output$indquery <- renderTable({
            error = paste( 'No results for', getterm1( session ) ) )
 }, sanitize.text.function = function(x) x)
 
-
+output$indquery2 <- renderDataTable({ 
+  tableout(mydf = getindcounts()$mydf, mynames = c('Indication',  'Counts' ),
+           error = paste( 'No results for', getterm1( session ) ) )
+},  escape=FALSE )
 
 
 
@@ -782,6 +815,14 @@ output$coqueryEex <- renderTable({
            error = paste( 'No Events for', getterm1( session ) )
   )
 }, sanitize.text.function = function(x) x)
+
+
+output$coqueryEex2 <- renderDataTable({  
+  tableout(mydf = getdrugcounts()$excludeddf,  
+           #           mynames = c( "Terms that contain '^' or ' ' ' can't be analyzed and are excluded", 'count' ),
+           error = paste( 'No Events for', getterm1( session ) )
+  )
+}, escape=FALSE )
 
 #Plots========================================================
 # output$cloudquery <- renderPlot({  
