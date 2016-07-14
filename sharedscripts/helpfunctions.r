@@ -115,7 +115,7 @@ The numeric values to graph.
   The variable that represent the subject identifier, or other experimental unit identifier.
 "  
   #2c*********************************** 
-  l['overviewsidedl'] <- "<h4>Reporting Ratios (PRR and RoR)</h4>
+  l['overviewsidedl'] <- "<h4>Reporting Ratios (PRR)</h4>
   The proportional reporting ratio (PRR) is a simple way to get a measure of how common an adverse
   event for a particular drug is compared to how common the event is in the overall database.  <br>
   A PRR > 1 for a drug-event combination indicates that a greater proportion of the reports for

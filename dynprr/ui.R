@@ -100,7 +100,7 @@ shinyUI(fluidPage(
       tabPanel("Report Counts and PRR", 
                wellPanel( 
                  htmlOutput_p( 'querytitle' ), 
-                 htmlOutput_p("query_counts",
+                 dataTableOutput_p("query_counts2",
                               tt('ts1'), tt('ts2'),
                               placement='top' )
                )
@@ -118,7 +118,8 @@ shinyUI(fluidPage(
                htmlOutput_p( 'coquerytext' ,
                              tt('gquery1'), tt('gquery2'),
                              placement='bottom' ),
-               wordcloudtabset('cloudcoquery', 'coquery',
+               wordcloudtabset('cloudcoquery', 'coquery2', 
+                               types=c('datatable', 'plot'),
                                popheads=c( tt('codrug1'), tt('word1') ), 
                                poptext=c( tt('codrug3'), tt('word2') ))
       ),
@@ -135,7 +136,8 @@ shinyUI(fluidPage(
                htmlOutput_p( 'coquerytextE' ,
                              tt('gquery1'), tt('gquery2'),
                              placement='bottom' ),
-               wordcloudtabset('cloudcoqueryE', 'coqueryE',
+               wordcloudtabset('cloudcoqueryE', 'coqueryE2',
+                               types=c('datatable', 'plot'),
                                popheads=c( tt('codrug1'), tt('word1') ), 
                                poptext=c( tt('codrug3'), tt('word2') ))
       ),

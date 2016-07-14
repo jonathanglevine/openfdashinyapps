@@ -552,6 +552,8 @@ getindcounts <- reactive({
     createAlert(session, 'alert', 'simalert',
                 title=mytitle, content = 'This may take a while.', dismiss = FALSE)
     comb <- merge(drug1_event, allevent[, c('term', 'count')], by.x='term', by.y='term')
+#     save(comb, file=paste0(getterm1( session ), '_LRT.RData'))
+#     save(totals, file=paste0(getterm1( session ), '_LRT_totals.RData'))
 #    comb2 <- merge(drug2_event, alldrug[, c('term', 'count')], by.x='term', by.y='term')
 #    print(totals)
     if (getwhich()=='D')

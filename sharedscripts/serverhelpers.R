@@ -76,7 +76,8 @@ return( c(curscale, .5) )
 }
 
 getcloud <- function(mydf, scale1=9, name=1, freq=2, title='Terms', scale=NULL) {
-  if ( is.null(scale))
+
+  if ( is.null(scale) & nrow(mydf) > 1)
   {
     scale <- invisible(getcloud_try(mydf, scale1, name, freq, title))
   }
@@ -243,6 +244,12 @@ getcpalinks <- function(column, names, values, mybaseurl, appendtext='')
   return( list( cpa = cpa, dynprr = dynprr ) )
 }
 
+getdynprr_as_links <- function(column, names, values, mybaseurl, appendtext='')
+{
+  dynprr <- numcoltohyper( paste(column, 'PRR'), column, names, values, type='DPS', 
+                        mybaseurl, append = appendtext)
+  return( list( dynprr = dynprr ) )
+}
 #buildurl =======================================================
 extractbaseurl <- function(myurl){
   myurl <- gsub('//', '/', myurl, fixed=TRUE )
@@ -346,21 +353,31 @@ getbaseurl <- function( which, mycururl=NULL, appname= 'cpa' ){
   }
   if (which=='D'){
     s <- 'RR_D'
+  } else if (which=='DAS'){
+    s <- 'RR_D_Activesubstance'
   } else if(which == 'E' ) {
     s <- 'RR_E'
-  } else if(which == 'R' ){
+  } else if(which == 'EAS' ) {
+    s <- 'RR_E_Activesubstance'
+  }  else if(which == 'R' ){
     s <- 'reportview'
   } else if(which == 'P' ){
     s <- 'dynprr'
+  } else if(which == 'DPS' ){
+    s <- 'dynprr_Activesubstance'
   } else if(which == 'DA' ){
     s <- 'dash'
   } else if(which == 'L' ){
     s <- 'labelview'
   } else if(which == 'LR' ){
     s <- 'LRTest' 
+  } else if (which=='LRDAS'){
+    s <- 'LR_D_Activesubstancename'
   } else if(which == 'LRE' ){
     s <- 'LRTest_E' 
-  }  else if(which == 'ENFD' ){
+  } else if (which=='LREAS'){
+    s <- 'LR_E_Activesubstancename'
+  } else if(which == 'ENFD' ){
     s <- 'drugenforceview'
   }  else if(which == 'AEDEV' ){
       s <- 'devicereports'

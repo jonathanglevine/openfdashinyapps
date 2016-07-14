@@ -80,7 +80,6 @@ getCritVal2 <- function(session, R, n_j, n_i, n, Pvector, prob)
               title=mytitle, content = 'This may take a while.', dismiss = FALSE)
   I <- length(Pvector)
   Simulatej<-rmultinom(R,size=n_j,prob=Pvector)  
-
   myLLRs<-matrix(0,I,R)   
   for (i in seq_along(Pvector)){
     for (j in 1:R)

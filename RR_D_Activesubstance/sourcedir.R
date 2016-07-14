@@ -1,12 +1,13 @@
 
 SOURCEDIR <- '../sharedscripts/'
-# if (!dir.exists(SOURCEDIR))
-#   {
-#     SOURCEDIR <- 'sharedscripts/'
-# }
 if (!file.exists( paste0( SOURCEDIR, 'serverhelpers.R') ))
 {
   SOURCEDIR <- 'sharedscripts/'
+}
+DATADIR <- '../activesubstancedata/'
+if (!file.exists( paste0( DATADIR, 'cleanmpmap.RData') ))
+{
+  DATADIR <- 'activesubstancedata/'
 }
 source( paste0( SOURCEDIR, 'prr_dl.R') )
 source( paste0( SOURCEDIR, 'helpfunctions.r') )

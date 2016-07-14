@@ -284,7 +284,7 @@ buildmergedtable <- reactive({
     ni. <- comb[, 'Event Counts' ]
     n.. <- comb[, 'Total Counts' ]
     prrci <- prre_ci( n.., ni., n.j, nij )
-    comb <- data.frame(comb, prr=prrci['prr'], sd=prrci['sd'], lb=prrci['lb'], ub=prrci['ub'] )
+    comb <- data.frame(comb, prr=round(prrci[['prr']], 2), sd=round(prrci[['sd']], 2), lb=round(prrci[['lb']], 2), ub=round(prrci[['ub']], 2) )
     names(comb) <-c(oldnames, 'prr', 'sd', 'lb', 'ub')
    start <- paste0( '[',  comb[,1], '01')
    start <- gsub('-', '', start)
@@ -403,9 +403,9 @@ getcocounts <- function(whichcount = 'D'){
 #Event Table
   } else {
     colname <- 'Preferred Term'
-    mynames <- c('M', colname, 'Count') 
     medlinelinks <- makemedlinelink(sourcedf[,1], 'M')          
     mydf <- data.frame(M=medlinelinks, mydf) 
+    mynames <- c('M', colname, 'Count', 'Cumulative Sum' ) 
     names <- c('v1','t1', 'v2', 't2')
     values <- c(getbestdrugvar(), getbestterm1(), getexactaevar() ) 
   }
@@ -506,7 +506,18 @@ output$coquery <- renderTable({
     return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )
   }  
 }, sanitize.text.function = function(x) x)  
-  
+
+output$coquery2 <- renderDataTable({  
+  #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
+  codrugs <- getcocountsD()$mydf
+  if ( is.data.frame(codrugs) )
+  { 
+    return(codrugs) 
+  } else  {
+    return( data.frame(Term=paste( 'No Events for', getterm1( session) ) ) )
+  }  
+}, escape=FALSE)   
+
 output$coqueryE <- renderTable({  
   #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
   codrugs <- getcocountsE()$mydf
@@ -517,6 +528,17 @@ output$coqueryE <- renderTable({
     return( data.frame(Term=paste( 'No Events for', getterm1( session ) ) ) )
   }  
 }, sanitize.text.function = function(x) x)
+
+output$coqueryE2 <- renderDataTable({  
+  #if ( getterm1() =='') {return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, URL=''))}
+  codrugs <- getcocountsE()$mydf
+  if ( is.data.frame(codrugs) )
+  { 
+    return(codrugs) 
+  } else  {
+    return( data.frame(Term=paste( 'No Events for', getterm1( session ) ) ) )
+  }  
+}, escape=FALSE)
 
 output$cloudcoquery <- renderPlot({  
   mydf <- getcocountsD()$sourcedf
@@ -559,6 +581,7 @@ output$eventname <- renderText({
   out <- paste( '<b>Event Term:<i>', s, '</i></b><br><br>' )
   return(out)
 })
+
 output$query_counts <- renderTable({  
 #  if (input$t1=='') {return(data.frame(Drug='Please enter drug name', Count=0))}
     mydf <- buildmergedtable()
@@ -568,6 +591,16 @@ output$query_counts <- renderTable({
     return( mydf) 
     } else  {return(data.frame(Drug=paste( 'No events for drug', getterm1( session, FALSE) ), Count=0))}
   }, include.rownames = FALSE, sanitize.text.function = (function(x) x) )
+
+output$query_counts2 <- renderDataTable({  
+  #  if (input$t1=='') {return(data.frame(Drug='Please enter drug name', Count=0))}
+  mydf <- buildmergedtable()
+  #   print(head(mydf))
+  if ( is.data.frame(mydf) )
+  {
+    return( mydf) 
+  } else  {return(data.frame(Drug=paste( 'No events for drug', getterm1( session, FALSE) ), Count=0))}
+}, escape=FALSE )
 
 output$allquerytext <- renderText({ 
   mydf <- getquery_all()

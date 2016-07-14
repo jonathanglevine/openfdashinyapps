@@ -8,8 +8,14 @@ exclude<- c(
   "RR_D - dep",
   'tmp',
   "sharedscripts",
+  "activesubstancedata",
   "downloads"
 )
+needsAS <- c('RR_D_Activesubstance',
+             'LR_D_Activesubstancename',
+             'LR_E_Activesubstancename',
+             'RR_E_Activesubstance',
+             'dynprr_Activesubstance')
 app <- setdiff(dirlist, exclude)
 # print(app)
 # app <- c('RR_D', 
@@ -49,4 +55,30 @@ for (i in seq_along( app ))
   flist <- list.files( mypath, all.files = TRUE, 
                        ignore.case = TRUE, full.names = TRUE, no..=TRUE)
   file.copy(from=flist, to= destpath1, overwrite = TRUE)
+  
+  ###get activesubstance files
+#  print(app[i])
+  if( app[i] %in% needsAS )
+  {
+#    browser()
+    mypath <-'activesubstancedata'
+    destpath1 <-paste0( base,   app[i], '/', mypath)
+  if (!dir.exists(destpath1))
+  {
+    dir.create(destpath1)
+  }
+  flist <- list.files( mypath, all.files = TRUE, 
+                       ignore.case = TRUE, full.names = TRUE, no..=TRUE)
+  file.copy(from=flist, to= destpath1, overwrite = TRUE)
+  
+  mypath <-'activesubstancedata/quarters'
+  destpath1 <-paste0( base,   app[i], '/', mypath)
+  if (!dir.exists(destpath1))
+  {
+    dir.create(destpath1)
+  }
+  flist <- list.files( mypath, all.files = TRUE, 
+                       ignore.case = TRUE, full.names = TRUE, no..=TRUE)
+  file.copy(from=flist, to= destpath1, overwrite = TRUE)
+  }
 }

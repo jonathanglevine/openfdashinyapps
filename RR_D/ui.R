@@ -117,8 +117,8 @@ shinyUI(fluidPage(
 #                          wordcloudtabset('cloudprr', 'prr', 
 #                                          popheads=c( tt('prr1'), tt('word1') ), 
 #                                          poptext=c( tt('prr5'), tt('word2') ) )
-                         maketabset( c('prr', 'cloudprr', 'textplot'), 
-                                     types=c('html', "plot", 'plot'),
+                         maketabset( c('prr2', 'cloudprr', 'textplot'), 
+                                     types=c('datatable', "plot", 'plot'),
                                      names=c("Table","Word Cloud", "text Plot"), 
                                      popheads = c(tt('prr1'), tt('word1'), tt('textplot1') ), 
                                      poptext = c( tt('prr5'), tt('wordPRR'), tt('textplot2') ) )
@@ -137,7 +137,8 @@ shinyUI(fluidPage(
                                        tt('gquery1'), tt('gquery2'),
                                        placement='bottom' )
                          ),
-                    wordcloudtabset('cloudquery', 'specifieddrug', 
+                    wordcloudtabset('cloudquery', 'specifieddrug2', 
+                                    types= c('datatable', 'plot'), 
                                     popheads=c( tt('event1'), tt('word1') ), 
                                     poptext=c( tt('event2'), tt('word2') )
                     )
@@ -154,7 +155,8 @@ shinyUI(fluidPage(
                          htmlOutput_p( 'allquerytext' ,
                                      tt('gquery1'), tt('gquery2'),
                                      placement='bottom' ) ),
-                         wordcloudtabset('cloudall', 'all', 
+                         wordcloudtabset('cloudall', 'all2',  
+                                         types= c('datatable', 'plot'),
                                          popheads=c( tt('event1'), tt('word1') ), 
                                          poptext=c( tt('event2'), tt('word2') ))
                 ),
@@ -175,7 +177,8 @@ shinyUI(fluidPage(
                          htmlOutput_p( 'coquerytextE' ,
                                        tt('gquery1'), tt('gquery2'),
                                        placement='bottom' ),
-                         wordcloudtabset('cloudcoqueryE', 'coqueryE',
+                         wordcloudtabset('cloudcoqueryE', 'coqueryE2',
+                                         types= c('datatable', 'plot'), 
                                          popheads=c( tt('codrug1'), tt('word1') ), 
                                          poptext=c( tt('codrug3'), tt('word2') ))
                 ),
@@ -192,7 +195,8 @@ shinyUI(fluidPage(
                          htmlOutput_p( 'coquerytext' ,
                                      tt('gquery1'), tt('gquery2'),
                                      placement='bottom' ),
-                         wordcloudtabset('cloudcoquery', 'coquery',
+                         wordcloudtabset('cloudcoquery', 'coquery2',
+                                         types= c('datatable', 'plot'), 
                                          popheads=c( tt('codrug1'), tt('word1') ), 
                                          poptext=c( tt('codrug3'), tt('word2') ))
                  ),
@@ -206,7 +210,8 @@ shinyUI(fluidPage(
                          wellPanel(
                            htmlOutput( 'indtitle' )
                          ),
-                         wordcloudtabset('cloudindquery', 'indquery',
+                         wordcloudtabset('cloudindquery', 'indquery2',
+                                         types= c('datatable', 'plot'), 
                                          popheads=c( tt('indication1'), tt('word1') ),
                                          poptext=c( tt('indication2'), tt('word2') ) )
                 ),

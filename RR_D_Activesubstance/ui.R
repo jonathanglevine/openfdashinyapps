@@ -3,63 +3,27 @@ library(shiny)
 
 source('sourcedir.R')
 
-getquarters <- function() {
-#  browser()
-  curdir <- paste0( getwd(), '/', '/data/quarters')
-  flist <- list.files( curdir, all.files = TRUE, 
-                       ignore.case = TRUE, full.names = FALSE, no..=TRUE)
-  myquarters <- substr( flist, 1, 8)
-  myquarters <- sort( myquarters, decreasing = TRUE)
-  mydates <- as.Date(myquarters, '%Y%m%d')
-  s <- quarters(mydates)
-  names(myquarters) <- paste( s, substr(myquarters,1,4 ) )
-  return( as.list( myquarters ) )
-}
 
 getdrugnames <- function() {
- # browser()
+  # browser()
   myquarters <- getquarters()
-  load( paste0( 'data/quarters/', myquarters[[1]], '.RData' ) )
-  drugnames <- c( '', unique( detable$d ))
+  load( paste0( DATADIR, 'quarters/', myquarters[[1]], '.RData' ) )
+  drugnames <- c( '', unique( as.character(detable$d) ))
   return( as.list( sort(drugnames) ) )
 }
-renderDrugName <- function() { 
-  
-  ( htmlOutput('drugname') )
-  
-} 
-renderLimit <- function() { 
-  
-  ( htmlOutput('limit') )
-  
-}  
-
-renderStart <- function() { 
-  
-
-  ( htmlOutput('start') )
-  
-}  
-
-renderStart2 <- function() { 
-  ( htmlOutput('start2') )
-  
-}  
-
+geteventnames <- function() {
+  # browser()
+  myquarters <- getquarters()
+  load( paste0( DATADIR, 'quarters/', myquarters[[1]], '.RData' ) )
+  eventnames <- c( '', unique( as.character(detable$e) ))
+  return( as.list( sort(eventnames) ) )
+}
 renderterm1 <- function() { 
   ( htmlOutput('term1') )
   
 }   
 getcurtab <- function() { 
-#  browser()
-#  print( textOutput('curtab') )
-  
-#  browser()
-   s<-( textOutput('limit') )
-#   ss <- strsplit( as.character(s), ">" , fixed=TRUE)
-#   ss <- strsplit( as.character(ss[[1]][2]), "<" , fixed=TRUE)
-#   print(ss[[1]][1])
-  return(  "PRR and ROR Results" )
+  return(  "PRR Results" )
   
 }  
 
@@ -97,43 +61,7 @@ shinyUI(fluidPage(
                                   HTML( tt('limit1') ), tt('limit2'),
                                   placement='bottom'),
                     selectInput( 'quarter' , "From Q1 2004 through", getquarters(), multiple = FALSE)
-#                    
-#                    numericInput_p('start', 'Rank of first event', 1,
-#                                   1, 999, step=1, 
-#                                   HTML( tt('limit1') ), tt('limit2'),
-#                                   placement='bottom')
                  ),
-#                  wellPanel(
-#                    bsButton("tabBut", "Select Drug and # of Events...", 
-#                             style='primary'),
-#                    br(),
-#                    renderDrugName()
-# #                    ,
-# #                    radioButtons('useexact', 'Match drug name:', c('Exactly'='exact', 'Any Term'='any'), selected='any'),
-# #                    renderLimit(),
-# #                    renderStart()
-#                  ), 
-#                 dateRangeInput('daterange', 'Use Reports Between: ', start = '1989-6-30', end = Sys.Date()),
-                 
-                 bsModal( 'modalExample', "Enter Variables", "tabBut", size = "small",
-                          htmlOutput('mymodal'),
-                          #          dateRangeInput('daterange2', 'Date Report Was First Received by FDA.', start = '1989-6-30', end = Sys.Date() ),
-                          bsButton("update", "Update Variables", style='primary'),
-#                           selectInput_p( 'drugname', "Name of Drug", getdrugnames(), 
-#                                       HTML( tt('drugname1') ), tt('drugname2'),
-#                                       placement='left'),  
-                          selectInput( 'drugname', "Name of Drug (activesubstancename)", getdrugnames(), multiple = FALSE)
-# , 
-#                           numericInput_p('limit2', 'Number of most frequent events to analyze:', 50,
-#                                          1, 100, step=1, 
-#                                          HTML( tt('limit1') ), tt('limit2'),
-#                                          placement='left'), 
-#                           
-#                           numericInput_p('start2', 'Start with ranked frquency #', 1,
-#                                          1, 999, step=1, 
-#                                          HTML( tt('limit1') ), tt('limit2'),
-#                                          placement='left')
-                          ),
                  bsAlert("alert"),
                  HTML( (loadhelp('overviewsidedl') ) )  )
         ,
@@ -142,7 +70,7 @@ shinyUI(fluidPage(
     mainPanel(
       bsAlert("alert2"),
       tabsetPanel(
-                tabPanel("PRR and ROR Results",
+                tabPanel("PRR Results",
 #                          wellPanel(
 #                          htmlOutput( 'prrtitle' )
 #                          ), 
@@ -165,13 +93,7 @@ shinyUI(fluidPage(
                          wellPanel( 
                            htmlOutput( 'alldrugtext' )
                          ), 
-#                          wellPanel( 
-#                            htmlOutput( 'querytitle' ), 
-#  #                          tableOutput("query"),
-#                            htmlOutput_p( 'querytext' ,
-#                                        tt('gquery1'), tt('gquery2'),
-#                                        placement='bottom' )
-#                          ),
+#                         
                     wordcloudtabset('cloudquery', 'specifieddrug2', 
                                     types=c('datatable', 'plot'),
                                     popheads=c( tt('event1'), tt('word1') ), 
@@ -179,17 +101,9 @@ shinyUI(fluidPage(
                     )
                 ),
                 tabPanel("Analyzed Event Counts for All Drugs",
-#                          wellPanel( 
-#                            htmlOutput( 'alltext' ),
-#                            htmlOutput_p( 'queryalltext' ,
-#                                        tt('gquery1'), tt('gquery2'),
-#                                        placement='bottom' )
-#                          ),
-#                          wellPanel(
-#                            htmlOutput( 'alltitle' ), 
-#                          htmlOutput_p( 'allquerytext' ,
-#                                      tt('gquery1'), tt('gquery2'),
-#                                      placement='bottom' ) ),
+                         wellPanel( 
+                           htmlOutput( 'alltext' )
+                         ),
                          wordcloudtabset('cloudall', 'all2', 
                                          types=c('datatable', 'plot'),
                                          popheads=c( tt('event1'), tt('word1') ), 
@@ -208,20 +122,6 @@ shinyUI(fluidPage(
                            dataTableOutput('maptable')
                          )
                  ),
-#                 tabPanel("Counts For Indications In Selected Reports",
-#                          wellPanel( 
-#                            htmlOutput( 'indtext' ),
-#                            htmlOutput_p( 'queryindtext' ,
-#                                        tt('gquery1'), tt('gquery2'),
-#                                        placement='bottom' )
-#                          ),
-#                          wellPanel(
-#                            htmlOutput( 'indtitle' )
-#                          ),
-#                          wordcloudtabset('cloudindquery', 'indquery',
-#                                          popheads=c( tt('indication1'), tt('word1') ),
-#                                          poptext=c( tt('indication2'), tt('word2') ) )
-#                 ),
                 tabPanel("Other Apps",  
                          wellPanel( 
                            htmlOutput( 'applinks' )
@@ -231,12 +131,7 @@ shinyUI(fluidPage(
                 tabPanel('About', 
                          img(src='l_openFDA.png'),
                          HTML( (loadhelp('about') ) )  ),
-#                 tabPanel("session",  
-#                          wellPanel( 
-#                            verbatimTextOutput( 'urlquery' )
-#                          )
-#                 ),
-              id='maintabs', selected=  "PRR and ROR Results" 
+              id='maintabs', selected=  "PRR Results" 
             )
           )
         )

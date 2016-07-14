@@ -9,6 +9,19 @@ require(shinyBS)
 #   return(out)
 # }
 
+getquarters <- function() {
+  #  browser()
+  curdir <- paste0( DATADIR, 'quarters')
+  flist <- list.files( curdir, all.files = TRUE, 
+                       ignore.case = TRUE, full.names = FALSE, no..=TRUE)
+  myquarters <- substr( flist, 1, 8)
+  myquarters <- sort( myquarters, decreasing = TRUE)
+  mydates <- as.Date(myquarters, '%Y%m%d')
+  s <- quarters(mydates)
+  names(myquarters) <- paste( s, substr(myquarters,1,4 ) )
+  return( as.list( myquarters ) )
+}
+
 getdrugvarchoices <- function(){
   openfdavars <- c( 
     'generic_name',
@@ -38,6 +51,7 @@ wordcloudtabset <- function(cloud, table,
                             names=c( "Tables","Word Cloud" ), 
                             popheads = c('Frequency Table',tt('word1') ), 
                             poptext = c('Counts', tt('word2') ) ) { 
+
 
   tabsetPanel(
     tabPanel(names[1],
@@ -206,6 +220,23 @@ htmlOutput_p <- function(table, pophead=NULL, poptext=NULL, placement='top')
     }
   }     
 
+dataTableOutput_p <- function(table, pophead=NULL, poptext=NULL, placement='top')
+{
+  s <- getpopstrings( table, pophead, poptext)
+  pophead <- s['pophead']
+  poptext <- s['poptext']
+  if( !is.null(pophead) )
+  {
+    popify(
+      dataTableOutput(table),
+      HTML(  paste('<b>', pophead,'</b>') ), poptext,
+      placement=placement)
+  }
+  else
+  {
+    dataTableOutput(table)
+  }
+}     
 
 plotOutput_p <- function(plot, pophead=NULL, poptext=NULL, placement='top', ...)
 {

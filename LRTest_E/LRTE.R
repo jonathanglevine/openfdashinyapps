@@ -653,7 +653,7 @@ getindcounts <- reactive({
 #    print(  comb2[, 'n..'])
  #   print((comb2$pri.))
     keptcols1 <-  c( iname, colname, "Significant?", 'LLR',
-                    'RR',  'nij' )
+                    'RR',  'nij' ,  'n.j', 'ni.',  'n..',  'a', 'b', 'c', 'd')
 #     keptcols2 <-  c( iname, colname, "Significant?", 'LLR',
 #                      'PRR' )
     #    mydf <- mydf[, c(1:4, 7,8,9)]
