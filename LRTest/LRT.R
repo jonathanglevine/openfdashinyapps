@@ -91,9 +91,10 @@ shinyServer(function(input, output, session) {
     if  (is.null(s) | s =="" ) {
       return("")
     }
-    names <- paste0('%22', s, '%22')
-    names <- paste0(names, collapse=' ')
-    return(names)
+    s <- gsub(' ', '%20', s, fixed=TRUE)
+    s <- paste0('%22', s, '%22')
+    s <- paste0(s, collapse=' ')
+    return(s)
   })
 
   getsearchtype <- reactive({ 
@@ -294,7 +295,7 @@ shinyServer(function(input, output, session) {
     }
     geturlquery()
     v <- c( '_exists_', getexactterm1var(), gettimevar() )
-    t <- c( input$v1, getterm1( session, quote = FALSE ), gettimerange() )
+    t <- c( input$v1, getterm1( session, quote = TRUE ), gettimerange() )
     mylist <-  getcounts999( session, v= v, t= t , 
                              count=getprrvarname(), exactrad = input$useexact )
     

@@ -40,10 +40,6 @@ shinyUI(fluidPage(
 #   titlePanel("RR-Drug"),
   sidebarLayout(
     sidebarPanel(
-      tabsetPanel(
-        tabPanel('Data Reference', HTML( (loadhelp('overview') ) )  )
-        ,
-        tabPanel('Select Drug',
                  selectInput_p("v1", 'Drug Variable' ,getdrugvarchoices(), 
                                HTML( tt('drugvar1') ), tt('drugvar2'),
                                placement='top'), 
@@ -113,8 +109,6 @@ shinyUI(fluidPage(
                  HTML( (loadhelp('LRT') ) )  
 )
         ,
-    id='sidetabs', selected='Select Drug')
-    ),
     mainPanel(
       
       bsAlert("alert2"),
