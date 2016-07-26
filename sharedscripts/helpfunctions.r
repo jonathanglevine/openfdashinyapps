@@ -237,9 +237,9 @@ This software was developed by FDA's Office Of Health Informatics
 (OHI) as part of the openFDA initiative. 
 <br>
 <h4>Development Team</h4>
-<b>Taha Kass-hout, MD, MS</b>, <i>FDA OC/OCS/Office of Health Informatics</i><br>
-Chief Health Informatics Officer, Creator of openFDA initiative.<br>
-<b>Jonathan 'Jay' Levine, PhD</b>, <i>FDA OC/OCS/Office of Health Informatics</i><br>
+<b>Taha Kass-hout, MD, MS</b><br>
+Creator of openFDA initiative.<br>
+<b>Jonathan 'Jay' Levine, PhD</b><br>
 Software design and implementation using R and Shiny, analytical methods.<br>
 <b>Roselie Bright, ScD</b>, <i>FDA OC/OCS/Office of Health Informatics</i><br>
 Software testing and evaluation, openFDA implementation.<br>

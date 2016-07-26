@@ -655,7 +655,7 @@ getindcounts <- reactive({
 #    print(  comb2[, 'n..'])
  #   print((comb2$pri.))
     keptcols1 <-  c( iname, colname, "Significant?", 'LLR',
-                    'RR',  'nij' ,  'n.j', 'ni.',  'n..',  'a', 'b', 'c', 'd')
+                    'RR',  'nij' )
 #     keptcols2 <-  c( iname, colname, "Significant?", 'LLR',
 #                      'PRR' )
     #    mydf <- mydf[, c(1:4, 7,8,9)]
@@ -763,6 +763,15 @@ prr <- reactive({
   }
   checkdf( getprr()[['comb']], getsearchtype() )
 })
+
+prrnohyper <- reactive({  
+  myprr <- prr()
+  mysource <- getprr()[['sourcedf']]
+  myprr[,2] <- mysource[,2]
+  out <- myprr[, -1]
+  return(out)
+})
+
 output$prr <- renderTable({  
   prr()
 },  sanitize.text.function = function(x) x)
@@ -872,6 +881,17 @@ AnalyzedEventCountsforDrug <- reactive(
             changecell = c( row=nrow(mydf), column='Term', val='Other (# of Events)' ) )
   }
 )
+
+AnalyzedEventCountsforDrugnohyper <- reactive(
+  {
+    mydf <- AnalyzedEventCountsforDrug()
+    mysource <- getdrugcountstable()$mydfsource
+    mydf[, 1] <- mysource[,1]
+    mydf[, 2] <- mysource[,2]
+    return(mydf)
+  }
+)
+
 output$AnalyzedEventCountsforDrug <- renderTable({  
   AnalyzedEventCountsforDrug()
 },  sanitize.text.function = function(x) x)
@@ -966,9 +986,19 @@ all <- function(){
           names=c('Term', paste( 'Counts for All Reports'), 'Query' ), 
           changecell=c( row=nrow(all), column='Term', val='Other (# of Events)' ) )
 }
+allnohyper <- function(){  
+  all <- geteventtotalstable()$mydf
+  mysource <- geteventtotalstable()$sourcedf
+  all[, 1] <- mysource[, 1]
+  all[, 2] <- mysource[, 2]
+  all[, 3] <- mysource[, 3]
+  return (all)
+}
+
 output$all <- renderTable({  
   all()
 }, sanitize.text.function = function(x) x)
+
 
 getcloudallscale <- reactive({
   scale <- getcloud_try( geteventtotalstable()$sourcedf,   scale1=9 )

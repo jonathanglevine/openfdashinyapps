@@ -261,37 +261,47 @@ extractbaseurl <- function(myurl){
   tmp4 <- paste0(tmp4, '/') 
   return(tmp4)
 }
-
+getemptyapplist <- function()
+{
+  mynames <- c('DA', 'D', 'E', 'P', 'Z', 'R', 'L', 'LR', 'LRE', 'ENFD',
+                  'AEDEV', 'ENFDEV', 'CLSDEV', '510', 'PMA', 'RLDEV', 'RCLDEV', 
+                  'ENFFD', 'DAS', 'EAS', 'DPS', 'LRDAS', 'LREAS' )
+  s <- vector(mode='character', length = length(mynames))
+ names(s) <- mynames
+  return(s)
+}
 makeapplinks <- function( cururl, append = '' )
 {
-  labels <- c('<h4>Drug Apps</h4><b>Dashboard-</b> Overview of reports for a drug', 
-              '<b>PRR for a Drug-</b> Calculate Proportional Reporting Rates for Common Events for a drug', 
-              '<b>PRR for an Event-</b> Calculate Proportional Reporting Rates for Common Drugs that have a specified event', 
-              '<b>Dynamic PRR-</b> Calculate Proportional Reporting Rates for a drug-event pair over time', 
-              '<b>Change Point Analysis-</b> Change point analysis for a drug-event pair over time',
-              '<b>Adverse Event Browser-</b> View reports that meet search criteria',
-              '<b>Label Browser-</b> View labels that meet search criteria',
-              '<b>Likelihood Ratio Test for Drug-</b> Calculate Likelihood Ratio Tests for Common Events for a drug',
-              '<b>Likelihood Ratio Test for Event-</b> Calculate Likelihood Ratio Tests for Common Drugs for an event',
-              '<b>Drug Enforcement Report Browser-</b> View labels that meet search criteria',
+  labels <- getemptyapplist()
+  labels['DA'] <- '<h4>Drug Apps</h4><b>Dashboard-</b> Overview of reports for a drug'
+  labels['D'] <- '<b>PRR for a Drug-</b> Calculate Proportional Reporting Rates for Common Events for a drug'
+  labels['E'] <-  '<b>PRR for an Event-</b> Calculate Proportional Reporting Rates for Common Drugs that have a specified event'
+  labels['P'] <-  '<b>Dynamic PRR-</b> Calculate Proportional Reporting Rates for a drug-event pair over time'
+  labels['Z'] <- '<b>Change Point Analysis-</b> Change point analysis for a drug-event pair over time'
+  labels['R'] <-  '<b>Adverse Event Browser-</b> View reports that meet search criteria'
+  labels['L'] <-           '<b>Label Browser-</b> View labels that meet search criteria'
+  labels['LR'] <-            '<b>Likelihood Ratio Test for Drug-</b> Calculate Likelihood Ratio Tests for Common Events for a drug'
+  labels['LRE'] <-           '<b>Likelihood Ratio Test for Event-</b> Calculate Likelihood Ratio Tests for Common Drugs for an event'
+  labels['ENFD'] <-           '<b>Drug Enforcement Report Browser-</b> View enforcement reports that meet search criteria'
               
-              '<hr><h4>Device Apps</h4><b>Adverse Event Browser-</b> View reports that meet search criteria',
-              '<b>Device Enforcement Report Browser-</b> View labels that meet search criteria',
-              '<b>Device Classification</b> View labels that meet search criteria',
-              '<b>510(k) Viewer-</b> View 510(k) Data',
-              '<b>PMA Viewer-</b> View PMA Data',
-              '<b>Registration and Listing Browser-</b> View Registration and Listing Data',
-              '<b>Recall Browser-</b> View Recall Reports',
-              '<hr><h4>Food Apps</h4><b>Food Enforement Report Browser-</b> View reports that meet search criteria'
-              
-              
-  )
-  s <- c('DA', 'D', 'E', 'P', 'Z', 'R', 'L', 'LR', 'LRE', 'ENFD',
-         'AEDEV', 'ENFDEV', 'CLSDEV', '510', 'PMA', 'RLDEV', 'RCLDEV', 
-         'ENFFD')
+  labels['AEDEV'] <-           '<hr><h4>Device Apps</h4><b>Adverse Event Browser-</b> View reports that meet search criteria'
+  labels['ENFDEV'] <-          '<b>Device Enforcement Report Browser-</b> View labels that meet search criteria'
+  labels['CLSDEV'] <-           '<b>Device Classification</b> View labels that meet search criteria'
+  labels['510'] <-          '<b>510(k) Viewer-</b> View 510(k) Data'
+  labels['PMA'] <-           '<b>PMA Viewer-</b> View PMA Data'
+  labels['RLDEV'] <-           '<b>Registration and Listing Browser-</b> View Registration and Listing Data'
+  labels['RCLDEV'] <-           '<b>Recall Browser-</b> View Recall Reports'
+  labels['ENFFD'] <-            '<hr><h4>Food Apps</h4><b>Food Enforement Report Browser-</b> View reports that meet search criteria'
+  
+  labels['DAS'] <- '<h4>Drug Apps Using Suspect Drugs Only</h4><b>PRR for a Drug-</b> Calculate Proportional Reporting Rates for Common Events for a drug'
+  labels['EAS'] <-  '<b>PRR for an Event-</b> Calculate Proportional Reporting Rates for Common Drugs that have a specified event'
+  labels['DPS'] <-  '<b>Dynamic PRR-</b> Calculate Proportional Reporting Rates for a drug-event pair over time'
+  labels['LRDAS'] <-            '<b>Likelihood Ratio Test for Drug-</b> Calculate Likelihood Ratio Tests for Common Events for a drug'
+  labels['LREAS'] <-           '<b>Likelihood Ratio Test for Event-</b> Calculate Likelihood Ratio Tests for Common Drugs for an event'
+  s <- names(labels)
   #s <- getbaseurl(s)
   out <- ''
-  if (append == '')
+  if ( max(append) == '')
   {
     addquery <- FALSE
   } else {
@@ -450,15 +460,6 @@ makemedlinelink <- function(s, s2) {
 
 coltohyper <- function(col, which, mybaseurl=NULL, display=NULL, makequery=TRUE, append=''){
   baseurl <- getbaseurl(which, mybaseurl)
-  if (which=='D'){
-    name <- 'drug'
-  } else if (which=='L'){
-    name <- 't2'
-  } else if (which=='DA'){
-    name <- 't1'
-  } else {
-    name <- 't1'
-  }
   name <- 't1'
   if (is.null(display)){
     display <- col
@@ -808,7 +809,6 @@ renderterm2 <-  function( term, label, label2='' ){
 getterm1description <- function(exact, term)
   {
   s <- term
-  print(s)
   if ( exact!= 'exact' )
     {
     s <- gsub(' ', ' or ', term, fixed=TRUE)

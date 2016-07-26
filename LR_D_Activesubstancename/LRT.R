@@ -47,34 +47,35 @@ shinyServer(function(input, output, session) {
      #LRTestE
      s[9] <- paste0( '', '&v1=', input$v1 , gettimeappend())
      
-   } else {
-     #Dashboard
-     s[1] <- paste0( '', '&v1=', input$v1 )
-     
-     #PRR for a Drug
-     s[2] <- paste0( '', '&v1=', input$v1 )
-     
-     #PRR for an Event
-     s[3] <- paste0( input$t1, '&v1=', input$v1 )
-     
-     #Dynamic PRR
-     s[4] <- paste0( '' , '&v1=', input$v1, '&v2=', getbestterm1var(), '&t2=', input$t1 )
-     
-     #CPA
-     s[5] <- paste0( '' , '&v1=', input$v1, '&v2=', getbestterm1var(), '&t2=', input$t1 )
-     
-     #Reportview
-     s[6] <- paste0( '', '&v1=', input$v1, '&v2=', getbestterm1var() , '&t2=', input$t1 )
-     
-     #labelview
-     s[7] <- paste0( '', '&v1=', input$v1, '&v2=', getbestterm1var() , '&t2=', input$t1)
-     
-     #LRTest
-     s[8] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )
-     
-     #LRTestE
-     s[9] <- paste0( '', '&v1=', input$v1 , gettimeappend())  
-     }
+   } 
+#    else {
+#      #Dashboard
+#      s[1] <- paste0( '', '&v1=', input$v1 )
+#      
+#      #PRR for a Drug
+#      s[2] <- paste0( '', '&v1=', input$v1 )
+#      
+#      #PRR for an Event
+#      s[3] <- paste0( input$t1, '&v1=', input$v1 )
+#      
+#      #Dynamic PRR
+#      s[4] <- paste0( '' , '&v1=', input$v1, '&v2=', getbestterm1var(), '&t2=', input$t1 )
+#      
+#      #CPA
+#      s[5] <- paste0( '' , '&v1=', input$v1, '&v2=', getbestterm1var(), '&t2=', input$t1 )
+#      
+#      #Reportview
+#      s[6] <- paste0( '', '&v1=', input$v1, '&v2=', getbestterm1var() , '&t2=', input$t1 )
+#      
+#      #labelview
+#      s[7] <- paste0( '', '&v1=', input$v1, '&v2=', getbestterm1var() , '&t2=', input$t1)
+#      
+#      #LRTest
+#      s[8] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )
+#      
+#      #LRTestE
+#      s[9] <- paste0( '', '&v1=', input$v1 , gettimeappend())  
+#      }
    return(s)
  }
 
@@ -91,8 +92,9 @@ shinyServer(function(input, output, session) {
     return( getwhich() )
   })
   
-#   getterm1var <- reactive({ 
+#   getbestterm1var <- reactive({ 
 #     q <- geturlquery()
+#     browser()
 #     anychanged()
 #     if (getwhichprogram() == 'E'){
 #       return(   "patient.reaction.reactionmeddrapt" )

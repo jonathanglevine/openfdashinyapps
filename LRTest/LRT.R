@@ -783,6 +783,15 @@ prr <- reactive({
   }
   return( checkdf( getprr()[['comb']], getsearchtype() ) )
 })
+
+prrnohyper <- reactive({  
+  myprr <- prr()
+  mysource <- prrsource()
+  myprr[,2] <- mysource[,2]
+  out <- myprr[, -1]
+  return(out)
+})
+
 prrsource <- reactive({  
   if (getterm1(session)=="") {
     return(data.frame(Term=paste('Please enter a', getsearchtype(), 'name'), Count=0, Count=0, PRR=0, ROR=0))
@@ -900,6 +909,17 @@ AnalyzedEventCountsforDrug <- reactive(
             changecell = c( row=nrow(mydf), column='Term', val='Other (# of Events)' ) )
   }
 )
+
+AnalyzedEventCountsforDrugnohyper <- reactive(
+  {
+    mydf <- AnalyzedEventCountsforDrug()
+    mysource <- getdrugcountstable()$mydfsource
+    mydf[, 1] <- mysource[,1]
+    mydf[, 2] <- mysource[,2]
+    return(mydf)
+  }
+)
+
 output$AnalyzedEventCountsforDrug <- renderTable({  
   AnalyzedEventCountsforDrug()
 },  sanitize.text.function = function(x) x)
@@ -988,9 +1008,21 @@ all <- function(){
           names=c('Term', paste( 'Counts for All Reports'), 'Query' ), 
           changecell=c( row=nrow(all), column='Term', val='Other (# of Events)' ) )
 }
+
+allnohyper <- function(){  
+  all <- geteventtotalstable()$mydf
+  mysource <- geteventtotalstable()$sourcedf
+  all[, 1] <- mysource[, 1]
+  all[, 2] <- mysource[, 2]
+  all[, 3] <- mysource[, 3]
+  return (all)
+}
+
 output$all <- renderTable({  
   all()
 }, sanitize.text.function = function(x) x)
+
+
 
 cloudall <- function(){  
   scale <- getcloudprrscale()

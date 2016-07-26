@@ -5,7 +5,7 @@ LRT Results based on Total Events
 `r helpText('Results sorted by LRR')`
 
 ```{r prr, fig.width=5, echo=FALSE}
-kable(prr(), digits=2 )
+kable(prrnohyper(), digits=2, escape=FALSE )
 ```
 
 ```{r cloudprr, fig.height=8, fig.width=8, echo=TRUE, fig.keep='last', error=FALSE, warning=FALSE}
@@ -28,7 +28,7 @@ simplot()
 `r titleAnalyzedEventCountsforDrug()`
 `r queryAnalyzedEventCountsforDrug()`
 ```{r AnalyzedEventCountsforDrug, echo=FALSE}
-kable(AnalyzedEventCountsforDrug())
+kable(AnalyzedEventCountsforDrugnohyper(), escape=FALSE)
 ```
 
 ```{r cloudAnalyzedEventCountsforDrug, fig.height=8, fig.width=8, fig.keep='last', echo=FALSE}
@@ -40,7 +40,7 @@ cloudAnalyzedEventCountsforDrug()
 `r queryalltext()`
 `r alltitle()`
 ```{r All, echo=FALSE}
-kable(all())
+kable(allnohyper(), escape=FALSE)
 ```
 
 ```{r cloudall, fig.height=8, fig.width=8, echo=FALSE, fig.keep='last'}

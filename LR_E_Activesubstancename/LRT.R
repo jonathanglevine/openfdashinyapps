@@ -58,16 +58,16 @@ shinyServer(function(input, output, session) {
      s[3] <- paste0( input$t1, '&v1=', input$v1 )
      
      #Dynamic PRR
-     s[4] <- paste0( '' , '&v1=', input$v1, '&v2=', getbestterm1var(), '&t2=', input$t1 )
+     s[4] <- paste0( '' , '&v1=', input$v1, '&v2=', input$v1, '&t2=', input$t1 )
      
      #CPA
-     s[5] <- paste0( '' , '&v1=', input$v1, '&v2=', getbestterm1var(), '&t2=', input$t1 )
+     s[5] <- paste0( '' , '&v1=', input$v1, '&v2=', input$v1, '&t2=', input$t1 )
      
      #Reportview
-     s[6] <- paste0( '', '&v1=', input$v1, '&v2=', getbestterm1var() , '&t2=', input$t1 )
+     s[6] <- paste0( '', '&v1=', input$v1, '&v2=', input$v1 , '&t2=', input$t1 )
      
      #labelview
-     s[7] <- paste0( '', '&v1=', input$v1, '&v2=', getbestterm1var() , '&t2=', input$t1)
+     s[7] <- paste0( '', '&v1=', input$v1, '&v2=', input$v1 , '&t2=', input$t1)
      
      #LRTest
      s[8] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )
@@ -91,7 +91,7 @@ shinyServer(function(input, output, session) {
     return( getwhich() )
   })
   
-#   getterm1var <- reactive({ 
+#   getbestterm1var <- reactive({ 
 #     q <- geturlquery()
 #     anychanged()
 #     if (getwhichprogram() == 'E'){

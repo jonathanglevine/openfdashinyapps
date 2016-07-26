@@ -1,70 +1,74 @@
-# popprr <- function()
-# {
-#   text <- "Some prr stuff"
-#   head <- "prr head"
-#   return( c(head=head, text=text) )
-# }
+
 #*****************************************************
 shinyServer(function(input, output, session) {
 #Getters ===============================================================
   getqueryvars <- function( num = 1 ) {
-   s <- vector(mode = "character", length = 7)
+   s <- getemptyapplist()
    if (getwhich() == 'D')
      {
      #Dashboard
-     s[1] <- paste0( input$t1, '&v1=', input$v1 )
+     s['DA'] <- paste0( input$t1, '&v1=', input$v1 )
      
      #PRR for a Drug
-     s[2] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )
+     s['D'] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )
      
      #PRR for an Event
-     s[3] <- paste0( '', '&v1=', input$v1, gettimeappend() )
+     s['E'] <- paste0( '', '&v1=', input$v1, gettimeappend() )
      
      #Dynamic PRR
-     s[4] <- paste0( input$t1 , '&v1=', input$v1 )
+     s['P'] <- paste0( input$t1 , '&v1=', input$v1 )
      
      #CPA
-     s[5] <- paste0(input$t1 , '&v1=', input$v1 )
+     s['Z'] <- paste0(input$t1 , '&v1=', input$v1 )
      
      #Reportview
-     s[6] <- paste0( input$t1, '&v1=', input$v1 )
+     s['R'] <- paste0( input$t1, '&v1=', input$v1 )
      
      #labelview
-     s[7] <- paste0( input$t1, '&v1=', input$v1 )
+     s['L'] <- paste0( input$t1, '&v1=', input$v1 )
      
      #LRTest
-     s[8] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )
+     s['LR'] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )
      
      #LRTestE
-     s[9] <- paste0( '', '&v1=', input$v1 , gettimeappend())
+     s['LRE'] <- paste0( '', '&v1=', input$v1 , gettimeappend())
+     
+     #Enforcement report
+     s['ENFFD'] <- paste0( input$t1 )
+     
+     s['LRDAS'] <- paste0( input$t1 )
+     s['DAS'] <- paste0( input$t1 )
+     
      
    } else {
      #Dashboard
-     s[1] <- paste0( '', '&v1=', input$v1 )
+     s['DA'] <- paste0( '', '&v1=', input$v1 )
      
      #PRR for a Drug
-     s[2] <- paste0( '', '&v1=', input$v1 , gettimeappend())
+     s['D'] <- paste0( '', '&v1=', input$v1 , gettimeappend())
      
      #PRR for an Event
-     s[3] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )
+     s['E'] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )
      
      #Dynamic PRR
-     s[4] <- paste0( '' , '&v1=', input$v1, '&v2=', getbestvar1(), '&t2=', input$t1 )
+     s['P'] <- paste0( '' , '&v1=', input$v1, '&v2=', getbestvar1(), '&t2=', input$t1 )
      
      #CPA
-     s[5] <- paste0( '' , '&v1=', input$v1, '&v2=', getbestvar1(), '&t2=', input$t1 )
+     s['Z'] <- paste0( '' , '&v1=', input$v1, '&v2=', getbestvar1(), '&t2=', input$t1 )
      
      #Reportview
-     s[6] <- paste0( '', '&v1=', input$v1, '&v2=', getbestvar1() , '&t2=', input$t1 )
+     s['R'] <- paste0( '', '&v1=', input$v1, '&v2=', getbestvar1() , '&t2=', input$t1 )
      
      #labelview
-     s[7] <- paste0( '', '&v1=', input$v1, '&v2=', getbestvar1() , '&t2=', input$t1)
+     s['L'] <- paste0( '', '&v1=', input$v1, '&v2=', getbestvar1() , '&t2=', input$t1)
      
      #LRTest
-     s[8] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )  
+     s['LR'] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )  
      
      #LRTestE
-     s[9] <- paste0( '', '&v1=', input$v1, gettimeappend() )
+     s['LRE'] <- paste0( '', '&v1=', input$v1, gettimeappend() )
+     s['LREAS'] <- paste0( input$t1 )
+     s['EAS'] <- paste0( input$t1 )
      }
    
    
