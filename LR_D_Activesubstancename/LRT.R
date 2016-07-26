@@ -340,6 +340,7 @@ loadquarter <- reactive({
       comb <- data.frame( comb, a, b, c, d, 
                           pi., 
                           p.j, nij,  n.j, ni.,  n..)
+      sourcedf <- sourcedf[order(sourcedf$LLR, decreasing = TRUE ),]
       comb <- comb[order(comb$LLR, decreasing = TRUE ),]
       names( comb ) <- c('Preferred Term',	paste('Counts for', mydrug ), 	'Counts for All Reports', 	
                          # 'PRR', 'Lower 95% CI for PRR', 'Upper 95% CI for PRR', 
@@ -355,7 +356,7 @@ loadquarter <- reactive({
       critval05 <- mycritval$critval
       comb[ comb$LLR > critval05  , "Significant?"] <- "p < 0.05"
       keptcols <- c('Preferred Term',	paste('Counts for', mydrug ), 	'Counts for All Reports', 
-                    'Significant?', 'LLR', 'RRR', 'nij',  'n.j', 'ni.',  'n..' )
+                    'Significant?', 'LLR', 'RRR', 'nij' )
     } else {
       
       mycritval <- list(critval=NA, critval01=NA, mymax=NA)
@@ -388,6 +389,15 @@ prrsource <- reactive({
   }
   return( checkdf( getprr()[['sourcedf']], getsearchtype() ) )
 })
+
+prrnohyper <- reactive({  
+  myprr <- prr()
+  mysource <- prrsource()
+  myprr[,1] <- mysource[,1]
+  out <- myprr
+  return(out)
+})
+
 output$prr <- renderDataTable({   
   prr()
 },  escape=FALSE)
