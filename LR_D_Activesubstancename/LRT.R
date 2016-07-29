@@ -48,34 +48,6 @@ shinyServer(function(input, output, session) {
      s[9] <- paste0( '', '&v1=', input$v1 , gettimeappend())
      
    } 
-#    else {
-#      #Dashboard
-#      s[1] <- paste0( '', '&v1=', input$v1 )
-#      
-#      #PRR for a Drug
-#      s[2] <- paste0( '', '&v1=', input$v1 )
-#      
-#      #PRR for an Event
-#      s[3] <- paste0( input$t1, '&v1=', input$v1 )
-#      
-#      #Dynamic PRR
-#      s[4] <- paste0( '' , '&v1=', input$v1, '&v2=', getbestterm1var(), '&t2=', input$t1 )
-#      
-#      #CPA
-#      s[5] <- paste0( '' , '&v1=', input$v1, '&v2=', getbestterm1var(), '&t2=', input$t1 )
-#      
-#      #Reportview
-#      s[6] <- paste0( '', '&v1=', input$v1, '&v2=', getbestterm1var() , '&t2=', input$t1 )
-#      
-#      #labelview
-#      s[7] <- paste0( '', '&v1=', input$v1, '&v2=', getbestterm1var() , '&t2=', input$t1)
-#      
-#      #LRTest
-#      s[8] <- paste0( input$t1, '&v1=', input$v1, gettimeappend() )
-#      
-#      #LRTestE
-#      s[9] <- paste0( '', '&v1=', input$v1 , gettimeappend())  
-#      }
    return(s)
  }
 
@@ -92,28 +64,7 @@ shinyServer(function(input, output, session) {
     return( getwhich() )
   })
   
-#   getbestterm1var <- reactive({ 
-#     q <- geturlquery()
-#     browser()
-#     anychanged()
-#     if (getwhichprogram() == 'E'){
-#       return(   "patient.reaction.reactionmeddrapt" )
-#     } else {
-#       return(input$v1)
-#     }
-#   })
-#   
-#   getprrvarname <- reactive({ 
-#     q <- geturlquery()
-#     if (getwhichprogram() != 'E'){
-#       #PRR table of reactions
-#       return(   "patient.reaction.reactionmeddrapt.exact" )
-#     } else {
-#       #PRR table of drugs
-#       return( paste0(input$v1, '.exact') )
-#     }
-#   })
-#   
+
 
   
   getterm1 <- function(session=NULL, quote=TRUE){
@@ -631,13 +582,4 @@ getcururl <- reactive({
    paste( 'Activesubstancename represents medicinalproduct values as shown in the table below.', '<a href="cleanmpmap.csv"  target="_blank">Download complete activesubstancename-medicinalproduct mapping </a>' , '' )
  })
   
-#  output$fulltable <- renderDataTable({  
-#    mytable <- getprr()$prrtab
-#    mynames <- names(mytable)
-#    mynames[1] <- 'Event'
-#    mynames[2] <- 'Drug'
-#    tableout(mydf = mytable, mynames=mynames,
-#             error = paste( 'No events for', getsearchtype(), getterm1( session ) ) 
-#    )
-#  })
 })
