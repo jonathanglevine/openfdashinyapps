@@ -165,42 +165,42 @@ column(width=9,
                          
                          wellPanel( 
                            htmlOutput('indtitle'),
-                           wordcloudtabset('indtabs', 'ind', names=c('Text', 'Tables') )
+                           wordcloudtabset('indtabs', 'ind', types=c('table', 'table'), names=c('Text', 'Tables') )
                          )
                 ),
                 tabPanel("4., 5. Warnings and precautions", 
                          
                          wellPanel(  
                            htmlOutput( 'warntabletitle' ), 
-                           wordcloudtabset('warntabs', 'warn', names=c('Text', 'Tables') )
+                           wordcloudtabset('warntabs', 'warn', types=c('table', 'table'), names=c('Text', 'Tables') )
                          )
                 ),
                 tabPanel("6. Adverse effects and 7. interactions",  
                          
                          wellPanel(  
                            tableOutput('aeinttabletitle'),
-                           wordcloudtabset('aetabs', 'aeint', names=c('Text', 'Tables') )
+                           wordcloudtabset('aetabs', 'aeint', types=c('table', 'table'), names=c('Text', 'Tables') )
                          )
                 ),
                 tabPanel("8. Special populations", 
                          
                          wellPanel(  
                            htmlOutput('specialtabletitle'),
-                           wordcloudtabset('specialtabs', 'special', names=c('Text', 'Tables') )
+                           wordcloudtabset('specialtabs', 'special', types=c('table', 'table'), names=c('Text', 'Tables') )
                          )
                 ),
                 tabPanel("10. Abuse and 9. overdosage",  
                          
                          wellPanel( 
                            htmlOutput('abuseodtabletitle'),
-                           wordcloudtabset('abuseodtabs', 'abuseod', names=c('Text', 'Tables') )
+                           wordcloudtabset('abuseodtabs', 'abuseod', types=c('table', 'table'), names=c('Text', 'Tables') )
                          )
                 ),
                 tabPanel("12. Clinical pharmacology",  
                          
                          wellPanel(  
                            htmlOutput('clinpharmtabletitle'),
-                           wordcloudtabset('clinpharmtabs', 'clinpharm', names=c('Text', 'Tables') )
+                           wordcloudtabset('clinpharmtabs', 'clinpharm', types=c('table', 'table'), names=c('Text', 'Tables') )
                          )
                 ),
                 tabPanel("13. Nonclinical toxicology", 
@@ -208,34 +208,34 @@ column(width=9,
                          wellPanel( 
                            
                            htmlOutput('nonclintoxtabletitle'),
-                           wordcloudtabset('nonclintoxtabs', 'nonclintox', names=c('Text', 'Tables') )
+                           wordcloudtabset('nonclintoxtabs', 'nonclintox', types=c('table', 'table'), names=c('Text', 'Tables') )
                          )
                 ),
                 tabPanel("14. Clinical Studies and 15. References", 
                          
                          wellPanel(  
                            htmlOutput( 'referencetabletitle' ), 
-                           wordcloudtabset('referencetabs', 'reference', names=c('Text', 'Tables') )
+                           wordcloudtabset('referencetabs', 'reference', types=c('table', 'table'), names=c('Text', 'Tables') )
                          )
                 ),
                 tabPanel("16. Supply, storage, and handling", 
                          
                          wellPanel(  
                            htmlOutput( 'supplytabletitle' ), 
-                           wordcloudtabset('supplytabs', 'supply', names=c('Text', 'Tables') )
+                           wordcloudtabset('supplytabs', 'supply', types=c('table', 'table'), names=c('Text', 'Tables') )
                          )
                 ),
                 tabPanel("Patient information", 
                          
                          wellPanel(  
                            htmlOutput('patinfotabletitle'),
-                           wordcloudtabset('patinfotabs', 'patinfo', names=c('Text', 'Tables') )
+                           wordcloudtabset('patinfotabs', 'patinfo', types=c('table', 'table'), names=c('Text', 'Tables') )
                          )
                 ),
                 tabPanel("Other",  
                          wellPanel( 
                            htmlOutput( 'othertabletitle' ),
-                           wordcloudtabset('othertabs', 'other', names=c('Text', 'Tables') )
+                           wordcloudtabset('othertabs', 'other', types=c('table', 'table'), names=c('Text', 'Tables') )
                          )
                 ),
                 tabPanel("OpenFDA",  

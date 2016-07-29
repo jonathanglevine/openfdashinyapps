@@ -52,7 +52,6 @@ wordcloudtabset <- function(cloud, table,
                             popheads = c('Frequency Table',tt('word1') ), 
                             poptext = c('Counts', tt('word2') ) ) { 
 
-
   tabsetPanel(
     tabPanel(names[1],
              wellPanel(
